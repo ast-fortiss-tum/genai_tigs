@@ -69,10 +69,21 @@ extension code/models are not available.
   determinism, end-to-end runner with fake generator/classifier, CIFAR-10 weights load into the copied VGGNet).
 - **Not verified:** anything that needs Stable Diffusion (no GPU / diffusers on the dev machine).
 
+## 2026-11-13 (3): MPS support, Llama smoke test, Mac timing  (commit after fd77450)
+- Committed: device-independent RNG (CPU generator for latents/GA noise, so seeds match on CUDA/MPS/CPU; latents are
+  NOT bit-identical to the legacy CUDA-generator scripts), configurable SD dtype, MPS sub-batching + attention slicing,
+  `fallback_text` (grammatical template phrase if the LLM fails all retries), pinned deps, `prompts/*.jsonl` (100 each).
+- Llama smoke test OK: Llama-3-8B-Instruct-32k Q4_K_M in `weights/llm/` loads, 1 prompt in ~6 s, first attempt, no fallback.
+  Fallback rate over many prompts still unmeasured. NB `--llm-model` is relative to `weights/`.
+- Mac (M-series, 32 GB, MPS) timing, CIFAR-10 FP-TIG, 1 seed: seed image ~10 s, but GA generations of 25 images took
+  50-150 s per denoising step (swap ~19/20 GB used, probably memory pressure; unconfirmed). Not usable for real runs.
+- **Decision:** no runs on the Mac. Experiments will be run on another machine (set up by Andrea).
+- Tests: 33 pass in conda env `dptig` (base python has no torch/diffusers).
+
 ## Open questions / next
-- Run FP-TIG on a GPU box (CIFAR-10 first, `--num-seeds 5`), then compare with Table 2 and settle items 1-2 above.
+- Run FP-TIG on the other machine (CIFAR-10 first, `--num-seeds 5`), then compare with Table 2 and settle items 1-2 above.
 - Ask Maryam: CelebA-HQ classifier and LoRA weights, and anything else from the original DP-TIG runs.
-- Download the Llama GGUF into `weights/llm/` and smoke-test `gen_prompts` (check fallback rate).
+- Measure the Llama fallback rate over a full `gen_prompts` run (smoke test of 1 prompt passed).
 - Phase 4 (diversity metrics, stats, MTurk) does not depend on Maryam and can start any time.
 
 Not in the repo: the paper PDF (`docs/`, unpublished preprint).
