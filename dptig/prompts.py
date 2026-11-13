@@ -55,7 +55,8 @@ class DiversePromptProvider:
         phrase = c.descriptor_phrases.get(s)
         if getattr(self.generator, "uses_template_phrases", False):
             phrase = c.template_phrases.get(s) or phrase
-        g = self.generator.generate(c.name, s, seed=self.cfg.base_seed + n, descriptor_text=phrase)
+        g = self.generator.generate(c.name, s, seed=self.cfg.base_seed + n, descriptor_text=phrase,
+                                    fallback_text=c.template_phrases.get(s))
         return PromptSpec(g.prompt, c.label, c.name, s, dict(llm_attempts=g.attempts, llm_fallback=g.fallback))
 
 

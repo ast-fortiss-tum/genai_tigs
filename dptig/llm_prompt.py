@@ -107,9 +107,11 @@ class PromptGenerator:
     def _key(category: str, keyword: str, seed: int) -> str:
         return f"{category}|{keyword}|{seed}"
 
-    def generate(self, category: str, keyword: str, seed: int, descriptor_text: Optional[str] = None) -> GeneratedPrompt:
+    def generate(self, category: str, keyword: str, seed: int, descriptor_text: Optional[str] = None,
+                 fallback_text: Optional[str] = None) -> GeneratedPrompt:
         """keyword: the descriptor term that must appear (e.g. 'plate'); descriptor_text: what the LLM is
-        shown (e.g. 'on a plate'; defaults to keyword)."""
+        shown (e.g. 'on a plate'; defaults to keyword).
+        fallback_text: grammatical phrase used only if the LLM never satisfies the constraints."""
         text = descriptor_text or keyword
         key = self._key(category, keyword, seed)
         if key in self._cache:
@@ -125,7 +127,7 @@ class PromptGenerator:
                 result = GeneratedPrompt(p, attempt + 1, False)
                 break
         if result is None:
-            result = GeneratedPrompt(fallback_prompt(category, text), self.max_retries, True)
+            result = GeneratedPrompt(fallback_prompt(category, fallback_text or text), self.max_retries, True)
         self._cache[key] = result
         if self.cache_path:
             self.cache_path.parent.mkdir(parents=True, exist_ok=True)
@@ -164,5 +166,6 @@ class TemplatePromptGenerator:
     (ablation). Needs no model, no cache, and is deterministic by construction."""
     uses_template_phrases = True
 
-    def generate(self, category: str, keyword: str, seed: int, descriptor_text: Optional[str] = None) -> GeneratedPrompt:
+    def generate(self, category: str, keyword: str, seed: int, descriptor_text: Optional[str] = None,
+                 fallback_text: Optional[str] = None) -> GeneratedPrompt:
         return GeneratedPrompt(fallback_prompt(category, descriptor_text or keyword), 0, False)

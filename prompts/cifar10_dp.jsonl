@@ -1,0 +1,100 @@
+{"key": "deer|water|0", "category": "deer", "descriptor": "water", "seed": 0, "prompt": "A photo of a deer in water", "attempts": 1, "fallback": false}
+{"key": "ship|water|1", "category": "ship", "descriptor": "water", "seed": 1, "prompt": "A photo of a ship in water", "attempts": 1, "fallback": false}
+{"key": "frog|water|2", "category": "frog", "descriptor": "water", "seed": 2, "prompt": "A photo of a frog in water", "attempts": 1, "fallback": false}
+{"key": "ship|road|3", "category": "ship", "descriptor": "road", "seed": 3, "prompt": "A photo of a ship on the road", "attempts": 1, "fallback": false}
+{"key": "automobile|water|4", "category": "automobile", "descriptor": "water", "seed": 4, "prompt": "A photo of an automobile in water", "attempts": 1, "fallback": false}
+{"key": "truck|water|5", "category": "truck", "descriptor": "water", "seed": 5, "prompt": "A photo of a truck in water", "attempts": 1, "fallback": false}
+{"key": "automobile|road|6", "category": "automobile", "descriptor": "road", "seed": 6, "prompt": "A photo of an automobile on the road", "attempts": 1, "fallback": false}
+{"key": "truck|grass|7", "category": "truck", "descriptor": "grass", "seed": 7, "prompt": "A photo of a truck on grass", "attempts": 1, "fallback": false}
+{"key": "ship|road|8", "category": "ship", "descriptor": "road", "seed": 8, "prompt": "A photo of a ship on a road", "attempts": 1, "fallback": false}
+{"key": "bird|water|9", "category": "bird", "descriptor": "water", "seed": 9, "prompt": "A photo of a bird in water", "attempts": 1, "fallback": false}
+{"key": "frog|water|10", "category": "frog", "descriptor": "water", "seed": 10, "prompt": "A photo of a frog in water", "attempts": 1, "fallback": false}
+{"key": "automobile|grass|11", "category": "automobile", "descriptor": "grass", "seed": 11, "prompt": "A photo of an automobile on grass", "attempts": 1, "fallback": false}
+{"key": "horse|grass|12", "category": "horse", "descriptor": "grass", "seed": 12, "prompt": "A photo of a horse on grass", "attempts": 3, "fallback": false}
+{"key": "bird|road|13", "category": "bird", "descriptor": "road", "seed": 13, "prompt": "A photo of a bird on the road", "attempts": 1, "fallback": false}
+{"key": "automobile|water|14", "category": "automobile", "descriptor": "water", "seed": 14, "prompt": "A photo of an automobile in water", "attempts": 1, "fallback": false}
+{"key": "ship|water|15", "category": "ship", "descriptor": "water", "seed": 15, "prompt": "A photo of a ship in water", "attempts": 1, "fallback": false}
+{"key": "cat|road|16", "category": "cat", "descriptor": "road", "seed": 16, "prompt": "A photo of a cat on the road", "attempts": 1, "fallback": false}
+{"key": "deer|road|17", "category": "deer", "descriptor": "road", "seed": 17, "prompt": "A photo of a deer on the road", "attempts": 1, "fallback": false}
+{"key": "cat|water|18", "category": "cat", "descriptor": "water", "seed": 18, "prompt": "A photo of a cat in water", "attempts": 5, "fallback": true}
+{"key": "horse|grass|19", "category": "horse", "descriptor": "grass", "seed": 19, "prompt": "A photo of a horse on grass", "attempts": 5, "fallback": false}
+{"key": "frog|road|20", "category": "frog", "descriptor": "road", "seed": 20, "prompt": "A photo of a frog on the road", "attempts": 1, "fallback": false}
+{"key": "airplane|road|21", "category": "airplane", "descriptor": "road", "seed": 21, "prompt": "A photo of an airplane on a road", "attempts": 1, "fallback": false}
+{"key": "cat|water|22", "category": "cat", "descriptor": "water", "seed": 22, "prompt": "A photo of a cat in water", "attempts": 1, "fallback": false}
+{"key": "ship|water|23", "category": "ship", "descriptor": "water", "seed": 23, "prompt": "A photo of a ship in water", "attempts": 1, "fallback": false}
+{"key": "truck|road|24", "category": "truck", "descriptor": "road", "seed": 24, "prompt": "A photo of a truck on the road", "attempts": 1, "fallback": false}
+{"key": "frog|water|25", "category": "frog", "descriptor": "water", "seed": 25, "prompt": "A photo of a frog in water", "attempts": 1, "fallback": false}
+{"key": "deer|road|26", "category": "deer", "descriptor": "road", "seed": 26, "prompt": "A photo of a deer on a road", "attempts": 1, "fallback": false}
+{"key": "ship|grass|27", "category": "ship", "descriptor": "grass", "seed": 27, "prompt": "A photo of a ship on grass", "attempts": 1, "fallback": false}
+{"key": "truck|water|28", "category": "truck", "descriptor": "water", "seed": 28, "prompt": "A photo of a truck in water", "attempts": 1, "fallback": false}
+{"key": "dog|water|29", "category": "dog", "descriptor": "water", "seed": 29, "prompt": "A photo of a dog in water", "attempts": 4, "fallback": false}
+{"key": "deer|water|30", "category": "deer", "descriptor": "water", "seed": 30, "prompt": "A photo of a deer in water", "attempts": 2, "fallback": false}
+{"key": "ship|road|31", "category": "ship", "descriptor": "road", "seed": 31, "prompt": "A photo of a ship on road", "attempts": 1, "fallback": false}
+{"key": "truck|water|32", "category": "truck", "descriptor": "water", "seed": 32, "prompt": "A photo of a truck in water", "attempts": 1, "fallback": false}
+{"key": "bird|road|33", "category": "bird", "descriptor": "road", "seed": 33, "prompt": "A photo of a bird on the road", "attempts": 1, "fallback": false}
+{"key": "deer|road|34", "category": "deer", "descriptor": "road", "seed": 34, "prompt": "A photo of a deer on the road", "attempts": 1, "fallback": false}
+{"key": "airplane|road|35", "category": "airplane", "descriptor": "road", "seed": 35, "prompt": "A photo of an airplane on the road", "attempts": 1, "fallback": false}
+{"key": "ship|grass|36", "category": "ship", "descriptor": "grass", "seed": 36, "prompt": "A photo of a ship on grass", "attempts": 1, "fallback": false}
+{"key": "automobile|grass|37", "category": "automobile", "descriptor": "grass", "seed": 37, "prompt": "A photo of an automobile on grass", "attempts": 1, "fallback": false}
+{"key": "cat|water|38", "category": "cat", "descriptor": "water", "seed": 38, "prompt": "A photo of a cat in water", "attempts": 2, "fallback": false}
+{"key": "cat|road|39", "category": "cat", "descriptor": "road", "seed": 39, "prompt": "A photo of a cat on the road", "attempts": 1, "fallback": false}
+{"key": "ship|grass|40", "category": "ship", "descriptor": "grass", "seed": 40, "prompt": "A photo of a ship on grass", "attempts": 1, "fallback": false}
+{"key": "airplane|road|41", "category": "airplane", "descriptor": "road", "seed": 41, "prompt": "A photo of an airplane on the road", "attempts": 1, "fallback": false}
+{"key": "deer|road|42", "category": "deer", "descriptor": "road", "seed": 42, "prompt": "A photo of a deer on the road", "attempts": 1, "fallback": false}
+{"key": "horse|road|43", "category": "horse", "descriptor": "road", "seed": 43, "prompt": "A photo of a horse on the road", "attempts": 1, "fallback": false}
+{"key": "airplane|road|44", "category": "airplane", "descriptor": "road", "seed": 44, "prompt": "A photo of an airplane on the road", "attempts": 1, "fallback": false}
+{"key": "dog|water|45", "category": "dog", "descriptor": "water", "seed": 45, "prompt": "A photo of a dog in water", "attempts": 5, "fallback": true}
+{"key": "truck|water|46", "category": "truck", "descriptor": "water", "seed": 46, "prompt": "A photo of a truck in water", "attempts": 1, "fallback": false}
+{"key": "cat|road|47", "category": "cat", "descriptor": "road", "seed": 47, "prompt": "A photo of a cat on the road", "attempts": 1, "fallback": false}
+{"key": "cat|road|48", "category": "cat", "descriptor": "road", "seed": 48, "prompt": "A photo of a cat on the road", "attempts": 1, "fallback": false}
+{"key": "dog|grass|49", "category": "dog", "descriptor": "grass", "seed": 49, "prompt": "A photo of a dog on grass", "attempts": 1, "fallback": false}
+{"key": "ship|water|50", "category": "ship", "descriptor": "water", "seed": 50, "prompt": "A photo of a ship on water", "attempts": 1, "fallback": false}
+{"key": "dog|grass|51", "category": "dog", "descriptor": "grass", "seed": 51, "prompt": "A photo of a dog on grass", "attempts": 1, "fallback": false}
+{"key": "truck|water|52", "category": "truck", "descriptor": "water", "seed": 52, "prompt": "A photo of a truck in water", "attempts": 1, "fallback": false}
+{"key": "dog|water|53", "category": "dog", "descriptor": "water", "seed": 53, "prompt": "A photo of a dog water", "attempts": 4, "fallback": false}
+{"key": "horse|road|54", "category": "horse", "descriptor": "road", "seed": 54, "prompt": "A photo of a horse on the road", "attempts": 1, "fallback": false}
+{"key": "frog|water|55", "category": "frog", "descriptor": "water", "seed": 55, "prompt": "A photo of a frog in water", "attempts": 1, "fallback": false}
+{"key": "deer|grass|56", "category": "deer", "descriptor": "grass", "seed": 56, "prompt": "A photo of a deer in grass", "attempts": 3, "fallback": false}
+{"key": "deer|grass|57", "category": "deer", "descriptor": "grass", "seed": 57, "prompt": "A photo of a deer standing on grass", "attempts": 1, "fallback": false}
+{"key": "deer|water|58", "category": "deer", "descriptor": "water", "seed": 58, "prompt": "A photo of a deer in water", "attempts": 1, "fallback": false}
+{"key": "automobile|grass|59", "category": "automobile", "descriptor": "grass", "seed": 59, "prompt": "A photo of an automobile parked on grass", "attempts": 1, "fallback": false}
+{"key": "cat|grass|60", "category": "cat", "descriptor": "grass", "seed": 60, "prompt": "A photo of a cat on grass", "attempts": 1, "fallback": false}
+{"key": "truck|water|61", "category": "truck", "descriptor": "water", "seed": 61, "prompt": "A photo of a truck in water", "attempts": 1, "fallback": false}
+{"key": "truck|grass|62", "category": "truck", "descriptor": "grass", "seed": 62, "prompt": "A photo of a truck on grass", "attempts": 1, "fallback": false}
+{"key": "frog|road|63", "category": "frog", "descriptor": "road", "seed": 63, "prompt": "A photo of a frog on the road", "attempts": 1, "fallback": false}
+{"key": "airplane|water|64", "category": "airplane", "descriptor": "water", "seed": 64, "prompt": "A photo of an airplane on water", "attempts": 1, "fallback": false}
+{"key": "cat|water|65", "category": "cat", "descriptor": "water", "seed": 65, "prompt": "A photo of a cat in water", "attempts": 5, "fallback": true}
+{"key": "cat|water|66", "category": "cat", "descriptor": "water", "seed": 66, "prompt": "A photo of a cat drinking water", "attempts": 3, "fallback": false}
+{"key": "cat|grass|67", "category": "cat", "descriptor": "grass", "seed": 67, "prompt": "A photo of a cat on grass", "attempts": 1, "fallback": false}
+{"key": "cat|water|68", "category": "cat", "descriptor": "water", "seed": 68, "prompt": "A photo of a cat in water", "attempts": 5, "fallback": true}
+{"key": "automobile|road|69", "category": "automobile", "descriptor": "road", "seed": 69, "prompt": "A photo of a automobile on the road", "attempts": 1, "fallback": false}
+{"key": "horse|road|70", "category": "horse", "descriptor": "road", "seed": 70, "prompt": "A photo of a horse on the road", "attempts": 1, "fallback": false}
+{"key": "automobile|road|71", "category": "automobile", "descriptor": "road", "seed": 71, "prompt": "A photo of an automobile on the road", "attempts": 1, "fallback": false}
+{"key": "airplane|road|72", "category": "airplane", "descriptor": "road", "seed": 72, "prompt": "A photo of an airplane on a road", "attempts": 1, "fallback": false}
+{"key": "airplane|grass|73", "category": "airplane", "descriptor": "grass", "seed": 73, "prompt": "A photo of an airplane on grass", "attempts": 1, "fallback": false}
+{"key": "dog|water|74", "category": "dog", "descriptor": "water", "seed": 74, "prompt": "A photo of a dog in water", "attempts": 1, "fallback": false}
+{"key": "ship|grass|75", "category": "ship", "descriptor": "grass", "seed": 75, "prompt": "A photo of a ship on grass", "attempts": 1, "fallback": false}
+{"key": "frog|grass|76", "category": "frog", "descriptor": "grass", "seed": 76, "prompt": "A photo of a frog on grass", "attempts": 1, "fallback": false}
+{"key": "bird|water|77", "category": "bird", "descriptor": "water", "seed": 77, "prompt": "A photo of a bird in water", "attempts": 1, "fallback": false}
+{"key": "frog|water|78", "category": "frog", "descriptor": "water", "seed": 78, "prompt": "A photo of a frog in water", "attempts": 2, "fallback": false}
+{"key": "bird|water|79", "category": "bird", "descriptor": "water", "seed": 79, "prompt": "A photo of a bird in water", "attempts": 2, "fallback": false}
+{"key": "airplane|grass|80", "category": "airplane", "descriptor": "grass", "seed": 80, "prompt": "A photo of an airplane on grass", "attempts": 1, "fallback": false}
+{"key": "deer|grass|81", "category": "deer", "descriptor": "grass", "seed": 81, "prompt": "A photo of a deer on grass", "attempts": 3, "fallback": false}
+{"key": "bird|grass|82", "category": "bird", "descriptor": "grass", "seed": 82, "prompt": "A photo of a bird sitting on grass", "attempts": 1, "fallback": false}
+{"key": "dog|water|83", "category": "dog", "descriptor": "water", "seed": 83, "prompt": "A photo of a dog in water", "attempts": 5, "fallback": true}
+{"key": "bird|water|84", "category": "bird", "descriptor": "water", "seed": 84, "prompt": "A photo of a bird in water", "attempts": 5, "fallback": true}
+{"key": "horse|grass|85", "category": "horse", "descriptor": "grass", "seed": 85, "prompt": "A photo of a horse on grass", "attempts": 1, "fallback": false}
+{"key": "horse|grass|86", "category": "horse", "descriptor": "grass", "seed": 86, "prompt": "A photo of a horse running on grass", "attempts": 3, "fallback": false}
+{"key": "bird|water|87", "category": "bird", "descriptor": "water", "seed": 87, "prompt": "A photo of a bird in water", "attempts": 1, "fallback": false}
+{"key": "bird|water|88", "category": "bird", "descriptor": "water", "seed": 88, "prompt": "A photo of a bird in water", "attempts": 5, "fallback": false}
+{"key": "automobile|grass|89", "category": "automobile", "descriptor": "grass", "seed": 89, "prompt": "A photo of an automobile on grass", "attempts": 1, "fallback": false}
+{"key": "airplane|water|90", "category": "airplane", "descriptor": "water", "seed": 90, "prompt": "A photo of an airplane on water", "attempts": 1, "fallback": false}
+{"key": "dog|water|91", "category": "dog", "descriptor": "water", "seed": 91, "prompt": "A photo of a dog in water", "attempts": 2, "fallback": false}
+{"key": "airplane|water|92", "category": "airplane", "descriptor": "water", "seed": 92, "prompt": "A photo of an airplane on water", "attempts": 1, "fallback": false}
+{"key": "airplane|road|93", "category": "airplane", "descriptor": "road", "seed": 93, "prompt": "A photo of an airplane on the road", "attempts": 1, "fallback": false}
+{"key": "deer|grass|94", "category": "deer", "descriptor": "grass", "seed": 94, "prompt": "A photo of a deer on grass", "attempts": 2, "fallback": false}
+{"key": "cat|road|95", "category": "cat", "descriptor": "road", "seed": 95, "prompt": "A photo of a cat on the road", "attempts": 1, "fallback": false}
+{"key": "bird|road|96", "category": "bird", "descriptor": "road", "seed": 96, "prompt": "A photo of a bird on the road", "attempts": 1, "fallback": false}
+{"key": "frog|water|97", "category": "frog", "descriptor": "water", "seed": 97, "prompt": "A photo of a frog in water", "attempts": 1, "fallback": false}
+{"key": "ship|road|98", "category": "ship", "descriptor": "road", "seed": 98, "prompt": "A photo of a ship on the road", "attempts": 1, "fallback": false}
+{"key": "cat|water|99", "category": "cat", "descriptor": "water", "seed": 99, "prompt": "A photo of a cat drinking water", "attempts": 5, "fallback": false}

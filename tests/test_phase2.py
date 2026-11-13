@@ -67,6 +67,12 @@ class GeneratorTests(unittest.TestCase):
         self.assertEqual(g.prompt, "A photo of an airplane grass")
         self.assertTrue(validate_prompt(g.prompt, "airplane", "grass")[0])
 
+    def test_fallback_uses_grammatical_phrase_when_given(self):
+        g = PromptGenerator(Stub(["A photo of a cat drinking"] * 2), max_retries=2).generate(
+            "cat", "water", 0, fallback_text="in water")
+        self.assertTrue(g.fallback)
+        self.assertEqual(g.prompt, "A photo of a cat in water")
+
     def test_uses_phrase_for_llm_but_keyword_for_validation(self):
         st = Stub(["A photo of a pizza on a plate."])
         g = PromptGenerator(st).generate("pizza", "plate", 0, descriptor_text="on a plate")

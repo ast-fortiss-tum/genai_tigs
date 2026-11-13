@@ -1,13 +1,21 @@
-pyyaml
-numpy
-pillow
-torch
-torchvision
+# Working set verified on macOS (Apple Silicon, MPS), conda env "dptig", Python 3.10:
+#   conda create -n dptig python=3.10 && pip install -r requirements-dptig.txt
+torch==2.3.1
+torchvision==0.18.1
+numpy<2
 diffusers==0.27.2
-transformers
-accelerate
+transformers==4.40.2
+accelerate==0.30.1
 peft==0.10.0
+huggingface-hub==0.23.5
+safetensors
+pyyaml
+pillow
+scipy==1.13.1          # older scipy wheels fail to dlopen on recent macOS
 tgate==0.1.1
 DeepCache==0.1.1
-llama-cpp-python   # DP-TIG LLM (Metal build on Mac: CMAKE_ARGS="-DGGML_METAL=on")
-# Phase 4: open_clip_torch, scipy
+sentencepiece
+protobuf
+# DP-TIG LLM. Metal build on Mac:  CMAKE_ARGS="-DGGML_METAL=on" pip install llama-cpp-python
+llama-cpp-python
+# Phase 4 (not yet installed): open_clip_torch

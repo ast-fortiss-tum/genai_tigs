@@ -36,8 +36,9 @@ Evaluate = Callable[[torch.Tensor], Tuple[Sequence[float], Sequence[Any]]]
 
 
 def _noise(shape, dtype, device, gen):
-    # sampled in fp32: fp16 randn is unsupported on CPU, and this keeps CPU/GPU streams aligned
-    return torch.randn(shape, generator=gen, device=device).to(dtype)
+    # Sampled on the CPU in fp32, then moved: the stream is then identical on CUDA, MPS and CPU
+    # (device RNGs differ), and fp16 randn is unsupported on CPU.
+    return torch.randn(shape, generator=gen).to(device=device, dtype=dtype)
 
 
 def run_search(seed_latent: torch.Tensor, evaluate: Evaluate, params: GAParams,
@@ -45,7 +46,7 @@ def run_search(seed_latent: torch.Tensor, evaluate: Evaluate, params: GAParams,
     """seed_latent: (1, C, H, W). evaluate: (N, C, H, W) -> (fitness[N], payload[N])."""
     z0 = seed_latent
     dev, dt = z0.device, z0.dtype
-    gen = torch.Generator(device=dev).manual_seed(seed)
+    gen = torch.Generator().manual_seed(seed)   # CPU generator, see _noise
     rng = np.random.default_rng(seed)
     lo, hi = params.bounds
     n_ch = z0.shape[1]
