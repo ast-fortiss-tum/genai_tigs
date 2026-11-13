@@ -26,6 +26,7 @@ class ClassSpec:
     name: str                          # natural-language name (used by DP-TIG)
     fixed_prompt: str                  # fine-tuning concept prompt (used by FP-TIG)
     descriptors: List[str] = field(default_factory=list)   # DP-TIG conditioning descriptors (keywords)
+    template_phrases: Dict[str, str] = field(default_factory=dict)    # keyword -> phrase for the LLM-free template arm
     descriptor_phrases: Dict[str, str] = field(default_factory=dict)  # optional keyword -> phrase shown to the LLM
 
 

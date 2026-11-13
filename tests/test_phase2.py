@@ -148,3 +148,26 @@ class DescriptorTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TemplateArmTests(unittest.TestCase):
+    def test_template_arm_is_llm_free_valid_and_paired(self):
+        for task in ("cifar10", "imagenet_pizza", "imagenet_teddy"):
+            cfg = load_config(ROOT / "configs" / f"{task}.yaml")
+            tp, dp, fp = make_provider("dp-template", cfg), DiversePromptProvider(cfg, PromptGenerator(EchoLLM())), \
+                FixedPromptProvider(cfg)
+            for n in range(40):
+                t = tp.get(n)
+                self.assertEqual(t.meta["llm_attempts"], 0)
+                self.assertEqual(tp.method, "dp-template")
+                self.assertEqual((t.category, t.descriptor, t.expected_label),
+                                 (dp.get(n).category, dp.get(n).descriptor, fp.get(n).expected_label))
+                ok, why = validate_prompt(t.prompt, t.category, t.descriptor)
+                self.assertTrue(ok, (t.prompt, why))
+
+    def test_template_examples(self):
+        cfg = load_config(ROOT / "configs" / "cifar10.yaml")
+        seen = {make_provider("dp-template", cfg).get(n).prompt for n in range(300)}
+        self.assertIn("A photo of a dog on road", seen)
+        self.assertIn("A photo of an airplane in water", seen)
+        self.assertEqual(len(seen), 30)

@@ -44,16 +44,18 @@ class DiversePromptProvider:
     """
     method = "dp"
 
-    def __init__(self, cfg: TaskConfig, generator):
-        self.cfg, self.generator = cfg, generator
+    def __init__(self, cfg: TaskConfig, generator, method: str = "dp"):
+        self.cfg, self.generator, self.method = cfg, generator, method
 
     def get(self, n: int) -> PromptSpec:
         c = self.cfg.sample_class(n)
         if not c.descriptors:
             raise ValueError(f"class {c.name!r} has no descriptors configured")
         s = random.Random(f"{self.cfg.base_seed}-desc-{n}").choice(c.descriptors)
-        g = self.generator.generate(c.name, s, seed=self.cfg.base_seed + n,
-                                    descriptor_text=c.descriptor_phrases.get(s))
+        phrase = c.descriptor_phrases.get(s)
+        if getattr(self.generator, "uses_template_phrases", False):
+            phrase = c.template_phrases.get(s) or phrase
+        g = self.generator.generate(c.name, s, seed=self.cfg.base_seed + n, descriptor_text=phrase)
         return PromptSpec(g.prompt, c.label, c.name, s, dict(llm_attempts=g.attempts, llm_fallback=g.fallback))
 
 
@@ -64,4 +66,7 @@ def make_provider(method: str, cfg: TaskConfig, generator=None) -> PromptProvide
         if generator is None:
             raise ValueError("DP-TIG needs a PromptGenerator")
         return DiversePromptProvider(cfg, generator)
+    if method == "dp-template":
+        from .llm_prompt import TemplatePromptGenerator
+        return DiversePromptProvider(cfg, TemplatePromptGenerator(), method="dp-template")
     raise ValueError(f"unknown method: {method}")

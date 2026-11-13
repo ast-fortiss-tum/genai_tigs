@@ -15,7 +15,7 @@ from .runner import run_task
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", required=True)
-    ap.add_argument("--method", choices=["fp", "dp"], default="fp")
+    ap.add_argument("--method", choices=["fp", "dp", "dp-template"], default="fp")
     ap.add_argument("--out", required=True)
     ap.add_argument("--num-seeds", type=int)
     ap.add_argument("--prompt-cache", help="DP-TIG prompt cache (default prompts/<task>_dp.jsonl)")

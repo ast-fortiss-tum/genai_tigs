@@ -27,4 +27,4 @@ llm:                     # DP-TIG prompt generation (paper Sec. 5.4.1)
 num_seeds: 100
 base_seed: 0
 classes:
-  - {label: 850, name: teddy bear, fixed_prompt: "A photo of 1teddy_toy teddy_bear", descriptors: [bed, table, chair]}
+  - {label: 850, name: teddy bear, fixed_prompt: "A photo of 1teddy_toy teddy_bear", descriptors: [bed, table, chair], template_phrases: {bed: "on a bed", table: "on a table", chair: "on a chair"}}

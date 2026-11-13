@@ -155,3 +155,14 @@ def build_prompt_generator(llm_cfg: dict, cache_path: Path, model_override: Opti
                                                   top_p=llm_cfg.get("top_p", 0.95)))
     return PromptGenerator(backend, cache_path, max_retries=llm_cfg.get("max_retries", 5),
                            max_words=llm_cfg.get("max_words", 12))
+
+
+class TemplatePromptGenerator:
+    """LLM-free DP-TIG arm: "A photo of a <category> <phrase>". Same interface as PromptGenerator.
+
+    Tests whether the LLM adds anything beyond the combinatorial target x descriptor information
+    (ablation). Needs no model, no cache, and is deterministic by construction."""
+    uses_template_phrases = True
+
+    def generate(self, category: str, keyword: str, seed: int, descriptor_text: Optional[str] = None) -> GeneratedPrompt:
+        return GeneratedPrompt(fallback_prompt(category, descriptor_text or keyword), 0, False)

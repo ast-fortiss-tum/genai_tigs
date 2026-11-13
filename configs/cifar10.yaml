@@ -27,13 +27,13 @@ llm:                     # DP-TIG prompt generation (paper Sec. 5.4.1)
 num_seeds: 100
 base_seed: 0
 classes:
-  - {label: 0, name: airplane, fixed_prompt: "A photo of A1plane0 cifar10_0", descriptors: [water, grass, road]}
-  - {label: 1, name: automobile, fixed_prompt: "A photo of car1 cifar10_1", descriptors: [water, grass, road]}
-  - {label: 2, name: bird, fixed_prompt: "A photo of bird2 cifar10_2", descriptors: [water, grass, road]}
-  - {label: 3, name: cat, fixed_prompt: "A photo of cat3 cifar10_3", descriptors: [water, grass, road]}
-  - {label: 4, name: deer, fixed_prompt: "A photo of deer4 cifar10_4", descriptors: [water, grass, road]}
-  - {label: 5, name: dog, fixed_prompt: "A photo of dog5 cifar10_5", descriptors: [water, grass, road]}
-  - {label: 6, name: frog, fixed_prompt: "A photo of frog6 cifar10_6", descriptors: [water, grass, road]}
-  - {label: 7, name: horse, fixed_prompt: "A photo of horse7 cifar10_7", descriptors: [water, grass, road]}
-  - {label: 8, name: ship, fixed_prompt: "A photo of ship8 cifar10_8", descriptors: [water, grass, road]}
-  - {label: 9, name: truck, fixed_prompt: "A photo of truck9 cifar10_9", descriptors: [water, grass, road]}
+  - {label: 0, name: airplane, fixed_prompt: "A photo of A1plane0 cifar10_0", descriptors: [water, grass, road], template_phrases: {water: "in water", grass: "on grass", road: "on road"}}
+  - {label: 1, name: automobile, fixed_prompt: "A photo of car1 cifar10_1", descriptors: [water, grass, road], template_phrases: {water: "in water", grass: "on grass", road: "on road"}}
+  - {label: 2, name: bird, fixed_prompt: "A photo of bird2 cifar10_2", descriptors: [water, grass, road], template_phrases: {water: "in water", grass: "on grass", road: "on road"}}
+  - {label: 3, name: cat, fixed_prompt: "A photo of cat3 cifar10_3", descriptors: [water, grass, road], template_phrases: {water: "in water", grass: "on grass", road: "on road"}}
+  - {label: 4, name: deer, fixed_prompt: "A photo of deer4 cifar10_4", descriptors: [water, grass, road], template_phrases: {water: "in water", grass: "on grass", road: "on road"}}
+  - {label: 5, name: dog, fixed_prompt: "A photo of dog5 cifar10_5", descriptors: [water, grass, road], template_phrases: {water: "in water", grass: "on grass", road: "on road"}}
+  - {label: 6, name: frog, fixed_prompt: "A photo of frog6 cifar10_6", descriptors: [water, grass, road], template_phrases: {water: "in water", grass: "on grass", road: "on road"}}
+  - {label: 7, name: horse, fixed_prompt: "A photo of horse7 cifar10_7", descriptors: [water, grass, road], template_phrases: {water: "in water", grass: "on grass", road: "on road"}}
+  - {label: 8, name: ship, fixed_prompt: "A photo of ship8 cifar10_8", descriptors: [water, grass, road], template_phrases: {water: "in water", grass: "on grass", road: "on road"}}
+  - {label: 9, name: truck, fixed_prompt: "A photo of truck9 cifar10_9", descriptors: [water, grass, road], template_phrases: {water: "in water", grass: "on grass", road: "on road"}}
