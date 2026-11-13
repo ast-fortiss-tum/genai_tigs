@@ -1,0 +1,31 @@
+name: imagenet_pizza
+sd:
+  base_model: runwayml/stable-diffusion-v1-5
+  lora: lora/pizza_imgnet-000005.safetensors
+  size: 512
+  steps: 25
+  tgate: true            # TGate + DeepCache, as in the legacy scripts; set false to use the plain pipeline
+  gate_step: 10
+  cache_interval: 3
+  seed_guidance: 3.5     # paper Sec. 4.1.1
+  mutation_guidance: 1.4
+classifier: {kind: imagenet_vgg19bn}   # torchvision pretrained weights
+fitness: logit_margin
+search:
+  pop_size: 25
+  best_left: 10          # tshdBest
+  max_iter: 250
+  bounds: [-5.3243408203125, 5.55196666717529]   # latent min/max from evaluation_results/mutation_extent_ranges (legacy values)
+  delta_divisor: {low: 10000, high: 1000}   # delta = (max-min)/divisor  (paper Sec. 5.5)
+  delta_scale: 1.0       # legacy scripts effectively used 2.0 (init_perturbation = 2*delta); paper Alg.1 uses 1.0
+llm:                     # DP-TIG prompt generation (paper Sec. 5.4.1)
+  model: llm/Llama-3-8B-Instruct-32k-v0.1.Q4_K_M.gguf   # under weights/
+  temperature: 0.5
+  top_p: 0.95
+  max_words: 12
+  max_retries: 5
+num_seeds: 100
+base_seed: 0
+classes:
+  - {label: 963, name: pizza, fixed_prompt: "A photo of 1pizza pizza_slice", descriptors: [plate, pepperoni, slice],
+     descriptor_phrases: {plate: "on a plate", pepperoni: "with pepperoni topping", slice: "as a slice of pizza"}}

@@ -1,0 +1,67 @@
+"""Prompt providers: the single point where FP-TIG and DP-TIG differ."""
+from __future__ import annotations
+
+import random
+from dataclasses import dataclass, field
+from typing import Optional, Protocol
+
+from .config import TaskConfig
+
+
+@dataclass
+class PromptSpec:
+    prompt: str
+    expected_label: int
+    category: str
+    descriptor: Optional[str] = None   # None for FP-TIG
+    meta: dict = field(default_factory=dict)   # e.g. LLM attempts / fallback flag
+
+
+class PromptProvider(Protocol):
+    method: str
+
+    def get(self, n: int) -> PromptSpec:
+        """Prompt (+ expected label) for the n-th initial latent. Must be deterministic in n."""
+
+
+class FixedPromptProvider:
+    """FP-TIG: the dataset-specific concept prompt used during LoRA fine-tuning."""
+    method = "fp"
+
+    def __init__(self, cfg: TaskConfig):
+        self.cfg = cfg
+
+    def get(self, n: int) -> PromptSpec:
+        c = self.cfg.sample_class(n)
+        return PromptSpec(c.fixed_prompt, c.label, c.name)
+
+
+class DiversePromptProvider:
+    """DP-TIG: one LLM-generated target-descriptor prompt per initial latent (Eq. 2).
+
+    The class for latent n is the same one FP-TIG picks (cfg.sample_class), so the two arms are paired;
+    the descriptor is drawn uniformly from the class's descriptors, deterministically in n.
+    """
+    method = "dp"
+
+    def __init__(self, cfg: TaskConfig, generator):
+        self.cfg, self.generator = cfg, generator
+
+    def get(self, n: int) -> PromptSpec:
+        c = self.cfg.sample_class(n)
+        if not c.descriptors:
+            raise ValueError(f"class {c.name!r} has no descriptors configured")
+        s = random.Random(f"{self.cfg.base_seed}-desc-{n}").choice(c.descriptors)
+        g = self.generator.generate(c.name, s, seed=self.cfg.base_seed + n,
+                                    descriptor_text=c.descriptor_phrases.get(s))
+        return PromptSpec(g.prompt, c.label, c.name, s, dict(llm_attempts=g.attempts, llm_fallback=g.fallback))
+
+
+def make_provider(method: str, cfg: TaskConfig, generator=None) -> PromptProvider:
+    if method == "fp":
+        return FixedPromptProvider(cfg)
+    if method == "dp":
+        if generator is None:
+            raise ValueError("DP-TIG needs a PromptGenerator")
+        return DiversePromptProvider(cfg, generator)
+    raise ValueError(f"unknown method: {method}")

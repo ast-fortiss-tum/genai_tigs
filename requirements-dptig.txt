@@ -1,0 +1,13 @@
+pyyaml
+numpy
+pillow
+torch
+torchvision
+diffusers==0.27.2
+transformers
+accelerate
+peft==0.10.0
+tgate==0.1.1
+DeepCache==0.1.1
+llama-cpp-python   # DP-TIG LLM (Metal build on Mac: CMAKE_ARGS="-DGGML_METAL=on")
+# Phase 4: open_clip_torch, scipy
