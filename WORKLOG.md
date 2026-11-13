@@ -78,6 +78,7 @@ extension code/models are not available.
 - Mac (M-series, 32 GB, MPS) timing, CIFAR-10 FP-TIG, 1 seed: seed image ~10 s, but GA generations of 25 images took
   50-150 s per denoising step (swap ~19/20 GB used, probably memory pressure; unconfirmed). Not usable for real runs.
 - **Decision:** no runs on the Mac. Experiments will be run on another machine (set up by Andrea).
+- Setup for a new machine written up in `SETUP.md` (env, weights to copy, prompts, run commands). CUDA untested.
 - Tests: 33 pass in conda env `dptig` (base python has no torch/diffusers).
 
 ## Open questions / next
