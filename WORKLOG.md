@@ -21,6 +21,18 @@ extension code/models are not available.
 
 ---
 
+## 2026-11-15 (2): Phase 4 (partial), diversity metrics + statistics + comparison CLI
+- `dptig/metrics.py`: Eq. 6 mean pairwise cosine distance; CLIP ViT-B/32 (HF `openai/clip-vit-base-patch32`, not
+  open_clip, to avoid a new dependency) and ResNet-50 (ImageNet V1, fc removed -> 2048-d). `dptig/stats.py`: Fisher,
+  Mann-Whitney + Cohen's d, paired t + d_z, Pearson/Spearman. `dptig/analyze.py`: `python -m dptig.analyze --fp DIR --dp DIR [--diversity]`.
+- **Assumption (paper silent):** what one diversity "score" is. The paired t-test needs several per condition, so we
+  draw k=30 random subsets of m=20 failure-inducing images (same index sets for both arms) and pair by subset. Confirm
+  with co-authors; alternatives: per-latent GA population, or one score per run repeat.
+- Paired t-test d is d_z (mean diff / SD diff); Mann-Whitney d is pooled-SD Cohen's d. Paper does not specify.
+- Verified: 42 unit tests pass (metric properties, naive-loop equivalence, stats, analyze on synthetic records).
+  Real CLIP/ResNet feature extraction smoke-tested separately (see below if filled in).
+- **Not done:** MTurk assets/analysis, label-preservation stats (needs human data), real-data run.
+
 ## 2026-11-15: Llama fallback rate measured from the pre-generated prompts (no new runs)
 - From `prompts/*.jsonl` (100 each): **0 fallbacks** in all three tasks. First-attempt success: CIFAR-10 78/100
   (9 needed all 5 attempts but still passed), teddy 89/100, pizza 100/100. So the validator + retry works; CIFAR-10
@@ -93,6 +105,6 @@ extension code/models are not available.
 - Run FP-TIG on the other machine (CIFAR-10 first, `--num-seeds 5`), then compare with Table 2 and settle items 1-2 above.
 - Ask Maryam: CelebA-HQ classifier and LoRA weights, and anything else from the original DP-TIG runs.
 - ~~Measure the Llama fallback rate~~ done 2026-11-15 (0/300).
-- Phase 4 (diversity metrics, stats, MTurk) does not depend on Maryam and can start any time.
+- Phase 4: metrics/stats/CLI done; MTurk assets and analysis remain.
 
 Not in the repo: the paper PDF (`docs/`, unpublished preprint).
