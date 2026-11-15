@@ -21,6 +21,14 @@ extension code/models are not available.
 
 ---
 
+## 2026-11-15: Llama fallback rate measured from the pre-generated prompts (no new runs)
+- From `prompts/*.jsonl` (100 each): **0 fallbacks** in all three tasks. First-attempt success: CIFAR-10 78/100
+  (9 needed all 5 attempts but still passed), teddy 89/100, pizza 100/100. So the validator + retry works; CIFAR-10
+  is the hard case (odd pairs such as "ship on the road").
+- **Observation, to review:** few distinct prompts per task: CIFAR-10 40, teddy 9, pizza 3 (per-request seed changes
+  sampling but T=0.5 gives near-identical text, esp. for 3 fixed descriptors). Low textual diversity may shrink the
+  FP vs DP gap; consider higher temperature / more descriptors if the effect is weak in Phase 5.
+
 ## 2026-11-13 (4): Added the LLM-free `dp-template` arm  (commit 21b3d95)
 - Prompt = `A photo of a <category> <phrase>`, same target x descriptor combinations as DP-TIG, no LLM, no cache.
   Selectable with `--method dp-template`; records are tagged `dp-template`.
@@ -84,7 +92,7 @@ extension code/models are not available.
 ## Open questions / next
 - Run FP-TIG on the other machine (CIFAR-10 first, `--num-seeds 5`), then compare with Table 2 and settle items 1-2 above.
 - Ask Maryam: CelebA-HQ classifier and LoRA weights, and anything else from the original DP-TIG runs.
-- Measure the Llama fallback rate over a full `gen_prompts` run (smoke test of 1 prompt passed).
+- ~~Measure the Llama fallback rate~~ done 2026-11-15 (0/300).
 - Phase 4 (diversity metrics, stats, MTurk) does not depend on Maryam and can start any time.
 
 Not in the repo: the paper PDF (`docs/`, unpublished preprint).
