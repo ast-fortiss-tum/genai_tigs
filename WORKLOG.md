@@ -30,7 +30,7 @@ extension code/models are not available.
   with co-authors; alternatives: per-latent GA population, or one score per run repeat.
 - Paired t-test d is d_z (mean diff / SD diff); Mann-Whitney d is pooled-SD Cohen's d. Paper does not specify.
 - Verified: 42 unit tests pass (metric properties, naive-loop equivalence, stats, analyze on synthetic records).
-  Real CLIP/ResNet feature extraction smoke-tested separately (see below if filled in).
+  Real CLIP/ResNet extractors smoke-tested on 6 random-noise images: CLIP 512-d, ResNet 2048-d, both load and run on CPU (weights downloaded, ResNet 98 MB). Scores are meaningless on noise; not yet run on real generated images.
 - **Not done:** MTurk assets/analysis, label-preservation stats (needs human data), real-data run.
 
 ## 2026-11-15: Llama fallback rate measured from the pre-generated prompts (no new runs)
