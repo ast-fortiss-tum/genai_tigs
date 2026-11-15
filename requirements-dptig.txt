@@ -18,4 +18,4 @@ sentencepiece
 protobuf
 # DP-TIG LLM. Metal build on Mac:  CMAKE_ARGS="-DGGML_METAL=on" pip install llama-cpp-python
 llama-cpp-python
-# Phase 4 (not yet installed): open_clip_torch
+# Phase 4 needs nothing extra (CLIP via transformers, ResNet-50 via torchvision); scipy is already pinned above

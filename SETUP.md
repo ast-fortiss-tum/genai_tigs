@@ -14,7 +14,7 @@ pip install -r requirements-dptig.txt
   wheels first (keep torch 2.3.x / diffusers 0.27.2 / peft 0.10.0 / tgate 0.1.1 / DeepCache 0.1.1 to match the legacy code).
 - `llama-cpp-python` is only needed to *generate* DP prompts, not to run them. CUDA build:
   `CMAKE_ARGS="-DGGML_CUDA=on" pip install llama-cpp-python`.
-- Tests: `python -m unittest discover -s tests` (33 pass on the dev Mac).
+- Tests: `python -m unittest discover -s tests` (42 pass on the dev Mac).
 
 ## 2. Weights (not in git; `weights/` is gitignored)
 Copy `weights/` from the dev Mac (about 840 MB without the LLM), or set `GENAI_TIGS_WEIGHTS=/path`:
@@ -43,3 +43,10 @@ python -m dptig.run --config configs/cifar10.yaml --method dp-template --out run
 - First thing to settle on the new machine: `search.delta_scale` (1.0 paper vs 2.0 legacy) and `fitness`
   (`logit_margin` legacy vs `softmax_margin` paper); see WORKLOG.md entry 1.
 - Time one seed first and record it in WORKLOG.md (expected: minutes per seed on a modern GPU; unmeasured).
+
+## 5. Analysis (Phase 4)
+```
+python -m dptig.analyze --fp runs/cifar10_fp --dp runs/cifar10_dp --diversity --device cuda
+```
+Needs no extra install: CLIP ViT-B/32 comes from `transformers` (HF `openai/clip-vit-base-patch32`) and ResNet-50
+from torchvision; both download on first use (about 100 MB for ResNet). Use `--k/--m` to change the diversity subsampling (default 30 x 20).

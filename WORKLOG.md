@@ -19,6 +19,25 @@ extension code/models are not available.
 | 4 | Diversity metrics (CLIP/ResNet-50), statistics, MTurk assets | todo |
 | 5 | Full experiment (100 latents x {FP,DP} x {low,high} x 4 tasks) | todo |
 
+## RESUME HERE (session closed 2026-11-15; continue on the new machine)
+State: `main` pushed (7c903a3 + this entry). 42 tests pass in conda env `dptig` (run `python -m unittest discover -s tests`;
+pytest is not installed). Dev Mac is for coding/tests only, no experiment runs. Follow `SETUP.md` on the new machine
+(copy `weights/`, install `requirements-dptig.txt`; CUDA path untested, expect to fix small things).
+
+Do next, in order:
+1. **Phase 1:** CIFAR-10 FP-TIG, `--num-seeds 5`, time one seed (record it here), compare with paper Table 2 FP rows.
+   Settle `search.delta_scale` (1.0 vs legacy 2.0) and `fitness` (`logit_margin` vs `softmax_margin`).
+2. Run DP and `dp-template` with the same seeds; run `python -m dptig.analyze --fp ... --dp ... --diversity`
+   on real output (first real-image test of the CLIP/ResNet extractors and of `analyze`, which is only
+   unit-tested on synthetic records).
+3. Review prompt diversity: only 40/9/3 distinct DP prompts (CIFAR-10/teddy/pizza); consider higher LLM temperature
+   or more descriptors if the DP effect is weak.
+4. **Waiting on people:** Maryam (CelebA-HQ classifier + LoRA, details/links for existing weights); co-authors
+   (definition of one diversity score, see the Phase 4 entry; wording of `template_phrases` in `configs/`).
+5. Remaining Phase 4: MTurk assets/analysis and label-preservation stats (need human data). Then Phase 3, Phase 5.
+
+Unverified so far: anything running Stable Diffusion end-to-end on GPU; real Llama fallback behaviour is fine (0/300).
+
 ---
 
 ## 2026-11-15 (2): Phase 4 (partial), diversity metrics + statistics + comparison CLI
