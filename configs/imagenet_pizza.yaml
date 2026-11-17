@@ -1,6 +1,6 @@
 name: imagenet_pizza
 sd:
-  base_model: runwayml/stable-diffusion-v1-5
+  base_model: stable-diffusion-v1-5/stable-diffusion-v1-5
   lora: lora/pizza_imgnet-000005.safetensors
   size: 512
   steps: 25

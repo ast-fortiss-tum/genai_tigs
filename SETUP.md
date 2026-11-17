@@ -1,6 +1,6 @@
 # Setting up DP-TIG on a new machine
 
-Verified on macOS (Apple Silicon, MPS) only. A CUDA machine has not been tested yet; the code picks the device
+Verified on macOS (Apple Silicon, MPS) and on Linux + RTX 4090 (CUDA, env build and base SD only, 2026-11-17); the code picks the device
 automatically (`pick_device` in `dptig/generator.py`) and uses fp16 on CUDA, fp32 elsewhere.
 **Do not run experiments on the dev Mac**: a GA generation took 50-150 s per denoising step (see WORKLOG.md, entry 3).
 
@@ -8,6 +8,7 @@ automatically (`pick_device` in `dptig/generator.py`) and uses fp16 on CUDA, fp3
 ```
 git clone <repo> && cd genai_tigs
 conda create -n dptig python=3.10 && conda activate dptig
+# CUDA: pip install torch==2.3.1 torchvision==0.18.1 --index-url https://download.pytorch.org/whl/cu121
 pip install -r requirements-dptig.txt
 ```
 - The pins in `requirements-dptig.txt` come from the macOS env. On CUDA, install the matching torch/torchvision
@@ -25,7 +26,8 @@ weights/llm/         Llama-3-8B-Instruct-32k-v0.1.Q4_K_M.gguf   (4.9 GB; optiona
 ```
 - Original zips are in `weights/archive/` on the dev Mac.
 - Missing: CelebA-HQ LoRA and classifier (asked of Maryam), ImageNet classifiers (torchvision pretrained, not checked).
-- Stable Diffusion: `runwayml/stable-diffusion-v1-5` is downloaded from the Hugging Face hub on first use (about 4 GB).
+- Stable Diffusion: `stable-diffusion-v1-5/stable-diffusion-v1-5` (official mirror; `runwayml/...` was removed from the hub in 2024)
+  is downloaded from the Hugging Face hub on first use (about 4 GB).
 
 ## 3. Prompts
 `prompts/{cifar10,imagenet_pizza,imagenet_teddy}_dp.jsonl` (100 each) are committed, so DP-TIG runs **without** the

@@ -19,6 +19,16 @@ extension code/models are not available.
 | 4 | Diversity metrics (CLIP/ResNet-50), statistics, MTurk assets | todo |
 | 5 | Full experiment (100 latents x {FP,DP} x {low,high} x 4 tasks) | todo |
 
+## 2026-11-17: New Linux GPU machine set up (RTX 4090, 24 GB)
+- Env: miniforge at `~/miniforge3`, conda env `dptig` (Python 3.10), torch 2.3.1+cu121 (driver CUDA 13.2 OK), other
+  pins from `requirements-dptig.txt`. `llama-cpp-python` not installed yet (only needed to regenerate prompts).
+- 42 tests pass (1 skipped: needs `weights/`).
+- **Configs changed:** `base_model` -> `stable-diffusion-v1-5/stable-diffusion-v1-5` (the `runwayml/` repo is gone
+  from the hub; same weights). Legacy scripts under `evaluation_results/`/`experiments/` still name `runwayml/`, untouched.
+- Base SD 1.5 smoke test on CUDA (fp16, no LoRA, no TGate): 25 images x 50 steps in 23 s (~0.9 s/image), peak 15.6 GB.
+  Output looks right. dptig generator/LoRA/classifier path not run yet.
+- **Blocked:** `weights/` (LoRAs, classifiers) not on this machine yet; Phase 1 starts once copied.
+
 ## RESUME HERE (session closed 2026-11-15; continue on the new machine)
 State: `main` pushed (7c903a3 + this entry). 42 tests pass in conda env `dptig` (run `python -m unittest discover -s tests`;
 pytest is not installed). Dev Mac is for coding/tests only, no experiment runs. Follow `SETUP.md` on the new machine
