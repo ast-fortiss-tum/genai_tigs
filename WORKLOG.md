@@ -116,6 +116,19 @@ No crash in 3.5 h of E-core-pinned running (vs. crashes every 1-25 min on all co
 - **fitness:** logit vs softmax margin indistinguishable at n=5 (same failure criterion, only ranking differs).
 - Caveat: 5 seeds; directional only. Waiting on Maryam to confirm which code produced Table 2.
 
+## 2026-11-17 (7): Defaults set from the grid; overnight queue launched
+- **Defaults now `delta_scale: 2.0`, `fitness: logit_margin`** in all task configs (= legacy code, closest to
+  Table 2; Andrea did not object, "keep crunching"). Reversible: only runs after this point use it; the per-record
+  `delta` field shows which. To be confirmed with Maryam (which code produced Table 2).
+- CelebA classifier (ours): CelebA test 91.9% mean acc, **CelebA-HQ test 91.3%** (Smiling 93.7, Bangs 96.4,
+  Eyeglasses 99.8) -> transfers to the HQ domain. Training 5 epochs x ~130 s.
+- LoRA images after the classifier filter: pools 7857 / 1129 / 455 (smiling / bangs / glasses), 38 picked each;
+  visually clean. Eyeglasses picks skew male + sunglasses (CelebA bias) -- may show up in what the GA finds.
+- `scripts/overnight.sh`: waits for the CelebA pipeline, then round 1 = 5 seeds for every task x {fp, dp, dp-template}
+  (+ seed checks for pizza/teddy, CelebA FP if seed validity >= 0.5), then FP and DP grow together to 15/30/50/100
+  seeds (dp-template up to 15), with an FP-vs-arm analysis (CPU, diversity on) after each step. CIFAR-10 FP reuses
+  the grid's logit_d2 run (identical settings). Output `runs/main/`, progress `runs/main/status.log`.
+
 ## RESUME HERE (session closed 2026-11-15; continue on the new machine)
 State: `main` pushed (7c903a3 + this entry). 42 tests pass in conda env `dptig` (run `python -m unittest discover -s tests`;
 pytest is not installed). Dev Mac is for coding/tests only, no experiment runs. Follow `SETUP.md` on the new machine
