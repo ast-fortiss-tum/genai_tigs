@@ -106,4 +106,9 @@ def load_classifier(cfg: dict, device) -> Classifier:
         except AttributeError:                      # older torchvision
             model = torchvision.models.vgg19_bn(pretrained=True)
         return Classifier(model, _imagenet_preprocess(), device)
+    if kind == "celeba_resnet50":                   # our replication, see dptig/celeba_classifier.py
+        from .celeba_classifier import build_model, preprocess
+        model = build_model()
+        model.load_state_dict(torch.load(resolve_weight(cfg["weights"]), map_location=device))
+        return Classifier(model, preprocess(), device)
     raise ValueError(f"unknown classifier kind: {kind}")

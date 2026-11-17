@@ -1,0 +1,38 @@
+# CelebA-HQ (paper Sec. 3, 4.2, 5.2). REPLICATION: the authors' LoRA and classifier were not available, so both were
+# retrained here (dptig/celeba_lora_data.py + scripts/train_celeba_lora.sh, dptig/celeba_classifier.py).
+# Results are therefore not directly comparable with Table 2; FP vs DP stays a fair comparison (same weights).
+name: celebahq
+sd:
+  base_model: stable-diffusion-v1-5/stable-diffusion-v1-5
+  lora: lora/celebahq_lorav1.5-000005.safetensors   # epoch 5, as for the authors' LoRAs
+  size: 512
+  steps: 25
+  tgate: true
+  gate_step: 10
+  cache_interval: 3
+  seed_guidance: 3.5
+  mutation_guidance: 1.4
+classifier: {kind: celeba_resnet50, weights: classifiers/celeba/resnet50_celeba40.pth}
+fitness: target_logit    # Eq. 4: logit of the target attribute; failure = logit < 0 (attribute predicted absent)
+search:
+  pop_size: 25
+  best_left: 10
+  max_iter: 250
+  bounds: [-5.3243408203125, 5.55196666717529]   # = ImageNet configs; bounds are min/max of N(0,1) latents, dataset-independent
+  delta_divisor: {low: 10000, high: 1000}
+  delta_scale: 1.0       # set from the Phase 1 grid outcome
+llm:
+  model: llm/Llama-3-8B-Instruct-32k-v0.1.Q4_K_M.gguf
+  temperature: 0.5
+  top_p: 0.95
+  max_words: 12
+  max_retries: 5
+num_seeds: 100
+base_seed: 0
+# label = attribute index in the classifier output (official CelebA order, dptig/celeba_classifier.py ATTRS)
+# descriptors: TODO -- the paper only says "attribute-specific constraints"; pick with dptig/descriptors.py (BLIP)
+# on generated seeds once the LoRA exists, then confirm with the co-authors. DP/dp-template arms need them.
+classes:
+  - {label: 31, name: smiling face, fixed_prompt: "A photo of smiling-face", descriptors: []}
+  - {label: 5, name: face with curtain bangs, fixed_prompt: "A photo of curtain-bangs", descriptors: []}
+  - {label: 15, name: face with eyeglasses, fixed_prompt: "A photo of eye-glasses", descriptors: []}

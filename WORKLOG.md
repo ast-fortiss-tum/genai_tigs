@@ -72,6 +72,32 @@ extension code/models are not available.
 - **For Andrea:** consider a BIOS update (Gigabyte Z790 UD AX, latest with Intel 0x12B+ microcode and "Intel Default
   Settings") and a stress test (e.g. OCCT / y-cruncher / Prime95) to check whether the CPU is degraded.
 
+## 2026-11-17 (5): CelebA-HQ replication prepared (runs after the grid)
+Andrea asks Maryam for the original CelebA-HQ weights; meanwhile we replicate them so Phase 3 is not blocked.
+If her weights arrive, prefer them (Table 2 comparability) and keep ours as a check.
+- **LoRA recipe recovered** from the safetensors metadata of the authors' LoRAs: bmaltais/kohya_ss **v21.8.9**
+  (commit ed4e3b02), rank 96 / alpha 48, AdamW8bit, lr 1e-4 (UNet) / 5e-5 (TE), cosine, 10% warmup, batch 2, fp16,
+  noise offset 0.1, caption dropout 0.1, shuffle caption, 6 epochs, epoch-5 checkpoint used. Pizza/teddy: 38 images
+  x 25 repeats, no regularisation; CIFAR-10: 37 x 25 per class + 925 reg. per class. **Captions = trigger phrase only**
+  (ss_tag_frequency), not BLIP sentences as the doc says.
+- kohya installed at that commit in `~/repos/kohya_ss`, conda env `kohya` (torch 2.0.1+cu118, xformers 0.0.21,
+  bitsandbytes 0.41.1, diffusers 0.18.2, transformers 4.30.2; training deps only, no GUI).
+- Data (in `~/data`, not in git): official CelebAMask-HQ zip (`liusq/CelebAMask-HQ`, 30k CelebA-HQ images +
+  attribute annotations + mapping to CelebA ids; sha256 verified) and `flwrlabs/celeba` (aligned CelebA, official
+  split 162770/19867/19962). `huggan/CelebA-faces-with-attributes` was rejected: **11 of its 132 parquet shards are
+  truncated on the hub** (sha256 matches the hub, so not a local/CPU problem; deterministic on P- and E-cores).
+- New code: `dptig/celeba_classifier.py` (prepare/train; ResNet-50 IMAGENET1K_V1, fc->40, Adam 1e-4 cosine, 5 epochs,
+  AMP; eval on CelebA test and on CelebA-HQ images whose source is in the CelebA test split), `dptig/celeba_lora_data.py`
+  (38 images/concept, target attribute present and the other two absent, no Blurry, source outside the test split,
+  **classifier label-noise filter** p>0.9 / p<0.1: an unfiltered pick contained an "Eyeglasses" face without glasses),
+  `scripts/train_celeba_lora.sh` (recovered hyperparameters), `dptig/seed_check.py` (seed validity per class, any task),
+  classifier kind `celeba_resnet50`, `configs/celebahq.yaml` (Eq. 4 `target_logit`; Smiling=31, Bangs=5, Eyeglasses=15;
+  FP prompts "A photo of <trigger>"; bounds = ImageNet configs).
+  `scripts/celeba_replicate.sh` runs it all, idempotent, waits for the grid before using the GPU, pinned to E-cores.
+- Tests: `tests/test_celeba.py` (pack/prepare round-trip, classifier kind, selection rules). 48 tests pass.
+- **Open:** CelebA DP descriptors (paper: "attribute-specific constraints", not listed) -> pick with BLIP on generated
+  seeds, confirm with co-authors; `delta_scale` in celebahq.yaml to follow the grid outcome.
+
 ## RESUME HERE (session closed 2026-11-15; continue on the new machine)
 State: `main` pushed (7c903a3 + this entry). 42 tests pass in conda env `dptig` (run `python -m unittest discover -s tests`;
 pytest is not installed). Dev Mac is for coding/tests only, no experiment runs. Follow `SETUP.md` on the new machine
