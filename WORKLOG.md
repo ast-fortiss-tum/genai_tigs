@@ -129,6 +129,15 @@ No crash in 3.5 h of E-core-pinned running (vs. crashes every 1-25 min on all co
   seeds (dp-template up to 15), with an FP-vs-arm analysis (CPU, diversity on) after each step. CIFAR-10 FP reuses
   the grid's logit_d2 run (identical settings). Output `runs/main/`, progress `runs/main/status.log`.
 
+## 2026-11-17 (8): Disk cleanup (52 -> 70 GB free)
+Removed (all re-creatable): `~/data/celeba_packed` (11 GB; rebuild = download flwrlabs/celeba + `dptig.celeba_classifier
+prepare`; only needed to retrain the classifier), CelebAMask-HQ zip (extracted images kept in `~/data/celebamask_hq`),
+classifier resume checkpoint `last.pt` (final `resnet50_celeba40.pth` + `metrics.json` kept), pip/conda caches,
+Miniforge installer. NB `scripts/celeba_replicate.sh` step 1 would now fail if re-run from scratch; steps 3+ skip
+because their outputs exist.
+Planned once the CelebA seed check passes: drop LoRA epochs other than 5 (and 6 as fallback), kohya env (5.5 GB) and
+the fp32 SD weights in the HF cache (only kohya uses them) -- only if no LoRA retraining is needed.
+
 ## RESUME HERE (session closed 2026-11-15; continue on the new machine)
 State: `main` pushed (7c903a3 + this entry). 42 tests pass in conda env `dptig` (run `python -m unittest discover -s tests`;
 pytest is not installed). Dev Mac is for coding/tests only, no experiment runs. Follow `SETUP.md` on the new machine
