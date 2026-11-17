@@ -20,7 +20,7 @@ def pick_device() -> torch.device:
 class SDGenerator:
     """G(latent, prompt) -> image. Latents are (N, 4, H/8, W/8) and are the search space."""
 
-    def __init__(self, sd_cfg: dict, device: torch.device):
+    def __init__(self, sd_cfg: dict, device: torch.device, patch_tgate: bool = True):
         from diffusers import StableDiffusionPipeline
         from diffusers.schedulers import DPMSolverMultistepScheduler
 
@@ -39,6 +39,9 @@ class SDGenerator:
         self.use_tgate = bool(sd_cfg.get("tgate", True))
         if self.use_tgate:
             from tgate import TgateSDDeepCacheLoader
+            if patch_tgate:   # closure-free tgate registration, fixes an intermittent NameError (tgate_patch.py)
+                from . import tgate_patch
+                tgate_patch.apply()
             pipe = TgateSDDeepCacheLoader(pipe, cache_interval=sd_cfg.get("cache_interval", 3),
                                           cache_branch_id=0).to(device)
         if device.type == "mps":

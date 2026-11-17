@@ -29,6 +29,35 @@ extension code/models are not available.
   Output looks right. dptig generator/LoRA/classifier path not run yet.
 - **Blocked:** `weights/` (LoRAs, classifiers) not on this machine yet; Phase 1 starts once copied.
 
+## 2026-11-17 (2): First end-to-end CUDA run; Phase 1 grid started
+- `dptig.run` CIFAR-10 FP, 1 seed: full path (SD fp16 variant + LoRA + TGate/DeepCache + VGG classifier + GA) runs
+  on CUDA with no code changes. Seed 0 ('deer', valid seed) failed at **iteration 1 at both levels** (pred cat,
+  margin about -20), 12 s total.
+- Seed (guidance 3.5) and mutants (guidance 1.4) differ visibly even at delta=0.001: the guidance switch alone can
+  flip the label. Same as legacy (`tig_sd_cifar10.py` l.133/163) and paper Sec. 4.1.1, so not a bug, but it inflates
+  iteration-1 failures. **To watch:** fraction of seeds failing at iteration 1 vs paper FP (Iter. 85.63 low / 14.18 high).
+- Phase 1 grid launched (`runs_grid.sh`, configs in `configs/grid/`): {logit,softmax}_margin x delta_scale {1,2},
+  5 seeds each, output `runs/grid/` (gitignored). Seed 0 of logit_d1 reused from the run above.
+  Rough estimate 3-4 h total (unmeasured; based on ~100 generations/seed at a few s each).
+
+## 2026-11-17 (3): Grid crashes, TGate fix, robust launcher
+- First grid launch died early in every config (logit_d1 after 3 seeds, the others after 1). softmax_d1 died with
+  `NameError: free variable 'self' referenced before assignment` inside `tgate/tgate_utils.py` (attention forward),
+  at the first `seed_image` after a GA run. logit_d1/logit_d2 stopped with **no traceback** (exit code lost: the old
+  launcher piped through grep/tee without pipefail; no access to kernel logs). Not reproducible on demand: 12 rounds of
+  seed+3x25 batches ran clean, and a fresh logit_d2 2-seed run completed (seed 1: low F@80, high F@10).
+- Cause (best explanation, not proven): tgate 0.1.1 re-wraps every `Attention.forward` in a new closure over `self`
+  at every denoising step (module<->closure cycles); occasionally the closure cell is found empty.
+- **Fix:** `dptig/tgate_patch.py`: one persistent bound-method forward per Attention module, per-step values stored as
+  attributes, same `tgate_processor` and bookkeeping. On by default in `SDGenerator` (`patch_tgate=False` = upstream).
+  `tests/test_tgate_patch_gpu.py`: **bit-identical** images vs upstream (seed image + 4-image batch), and checks the
+  patched forward is installed. 43 tests pass. Seeds finished before the fix are kept (identical generator output).
+- `runs_grid.sh` rewritten: full logs incl. tracebacks, `PYTHONFAULTHANDLER=1`, exit code per attempt in
+  `runs/grid/attempts.log`, re-launches a config (resume) up to 3x until it has N records.
+- Timing (measured, logit_d1): ~5.4 s per GA generation of 25 images; seed 1 (106+22 gens) 690 s, seed 2 (47+13) 326 s.
+- Note: the silent deaths are still unexplained; if `attempts.log` shows non-zero exits with no traceback, suspect
+  the OOM killer / GPU memory (23.5 of 24 GB in use during the GA).
+
 ## RESUME HERE (session closed 2026-11-15; continue on the new machine)
 State: `main` pushed (7c903a3 + this entry). 42 tests pass in conda env `dptig` (run `python -m unittest discover -s tests`;
 pytest is not installed). Dev Mac is for coding/tests only, no experiment runs. Follow `SETUP.md` on the new machine
