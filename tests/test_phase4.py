@@ -66,3 +66,38 @@ class AnalyzeTests(unittest.TestCase):
             r = compare(Path(t) / "fp", Path(t) / "dp")
             self.assertGreater(r["low"]["effectiveness"]["odds_ratio"], 1)
             self.assertIn("iterations", r["high"])
+
+
+class SmallSampleTests(unittest.TestCase):
+    def test_paired_t_degenerate(self):
+        r = paired_t([0.3] * 30, [0.2] * 30)
+        self.assertTrue(r.get("degenerate"))
+        self.assertTrue(np.isnan(r["t"]))
+
+    def test_diversity_insufficient_images(self):
+        """Fewer failure images than m: full-set D reported, no test (was t~1e15, p=0)."""
+        import json, tempfile
+        from pathlib import Path
+        from unittest import mock
+        from PIL import Image
+        from dptig import analyze
+
+        class FakeExt:
+            def __init__(self, name): self.name = name
+            def __call__(self, imgs): return np.random.default_rng(len(imgs)).normal(size=(len(imgs), 8))
+
+        with tempfile.TemporaryDirectory() as t:
+            for name in ("fp", "dp"):
+                d = Path(t) / name; (d / "low").mkdir(parents=True)
+                rows = []
+                for i in range(4):
+                    Image.new("RGB", (8, 8), (i * 50, 0, 0)).save(d / "low" / f"{i}.png")
+                    rows.append(dict(n=i, seed_ok=True, runs={"low": dict(failed=True, iterations=3, file=f"low/{i}.png")}))
+                (d / "records.jsonl").write_text("\n".join(json.dumps(r) for r in rows))
+            with mock.patch.object(analyze, "ClipExtractor", lambda dev: FakeExt("clip")), \
+                    mock.patch.object(analyze, "ResNetExtractor", lambda dev: FakeExt("resnet50")):
+                r = analyze.compare(Path(t) / "fp", Path(t) / "dp", levels=("low",), diversity=True, m=20)
+                r2 = analyze.compare(Path(t) / "fp", Path(t) / "dp", levels=("low",), diversity=True, m=2, k=10)
+        self.assertTrue(r["low"]["diversity_clip"]["insufficient"])
+        self.assertIn("D_dp", r["low"]["diversity_clip"])
+        self.assertNotIn("insufficient", r2["low"]["diversity_clip"])

@@ -149,6 +149,27 @@ the fp32 SD weights in the HF cache (only kohya uses them) -- only if no LoRA re
   the LoRA training images by Male / Eyeglasses-vs-sunglasses. kohya env + fp32 SD weights kept until decided.
 - CelebA FP joins the overnight queue (gate: seed validity >= 0.5).
 
+## 2026-11-17 (10): First CIFAR-10 DP results; two fixes; Eq. 6 scale question
+- CIFAR-10 DP (5 seeds, same latents as FP): **3/5 seeds valid** (FP 5/5); rejected = "a deer in water", "a frog in
+  water". All 3 valid DP seeds fail at both levels. Iterations DP vs FP (low/high): ship 71/9 vs 64/10, ship 189/24 vs
+  189/15, automobile 65/9 vs 165/17. Too few to conclude.
+- **DP prompt == dp-template prompt** (case-insensitive) for 58/100 CIFAR-10, **100/100 pizza**, 28/100 teddy latents
+  (Llama reproduces the template). On those latents the two arms are the same experiment (identical results seen:
+  ship 71/9 in both). The LLM-vs-template ablation can only differ where prompts differ; pizza's ablation is void.
+  -> `scripts/overnight.sh` now skips dp-template when all prompts in the range are identical (pizza). Relevant to the
+  co-authors' framing question (entry 2026-11-13 (3)): with these prompts the LLM adds little beyond the template.
+- **Bug fixed (analysis):** with fewer failure images than m=20, every subsample is the whole set -> identical scores
+  -> paired t ~1e15, p=0 (nonsense in the first two analysis files, moved to `runs/main/analysis/old_degenerate/`).
+  Now: full-set D reported with `insufficient: true` and no test; `stats.paired_t` returns NaN when differences are
+  constant. Tests added (50 pass). Also `tests/test_core` delta test updated for delta_scale 2.0 (scaled step equals the
+  legacy `init_perturbation` 0.00218342552185059 exactly).
+- **Question for co-authors (Table 3 scale):** our Eq. 6 values are ~0.23-0.31 (CLIP and ResNet, CIFAR-10), the paper
+  reports ~0.8-0.95. Our code is Eq. 6 literally (mean 1-cos over distinct pairs, verified vs a naive loop). 0.95 would
+  mean nearly orthogonal embeddings for same-class images, implausible for CLIP. Ask how Table 3 was computed.
+- Pizza seed check: 16/20 = 80% (paper FP 73%).
+- Queue restarted at 19:11 without losing work (old bash parent stopped, running pizza FP left to finish; new queue
+  waits for it).
+
 ## RESUME HERE (session closed 2026-11-15; continue on the new machine)
 State: `main` pushed (7c903a3 + this entry). 42 tests pass in conda env `dptig` (run `python -m unittest discover -s tests`;
 pytest is not installed). Dev Mac is for coding/tests only, no experiment runs. Follow `SETUP.md` on the new machine

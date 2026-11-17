@@ -137,10 +137,16 @@ class RunnerTests(unittest.TestCase):
             self.assertEqual(len(p.read_text().splitlines()), 4)   # resume: nothing re-run
 
     def test_config_deltas_match_legacy_ranges(self):
+        # configs use delta_scale 2.0 since the Phase 1 grid (WORKLOG 2026-11-17 (6)); the unscaled step is the
+        # legacy perturbation_size and the scaled one the legacy init_perturbation (tig_sd_cifar10.py l.90)
         c = load_config(ROOT / "configs" / "cifar10.yaml")
-        self.assertAlmostEqual(c.delta("low"), 0.00109171276092529, places=9)    # legacy perturbation_size
+        s = float(c.search.get("delta_scale", 1.0))
+        self.assertAlmostEqual(c.delta("low") / s, 0.00109171276092529, places=9)    # legacy perturbation_size
+        if s == 2.0:
+            self.assertAlmostEqual(c.delta("low"), 0.00218342552185059, places=9)    # legacy init_perturbation
         i = load_config(ROOT / "configs" / "imagenet_pizza.yaml")
-        self.assertAlmostEqual(i.delta("high"), 0.0108763074874878, places=9)    # legacy perturbation_size
+        self.assertAlmostEqual(i.delta("high") / float(i.search.get("delta_scale", 1.0)), 0.0108763074874878,
+                               places=9)                                              # legacy perturbation_size
 
 
 class ResizeTests(unittest.TestCase):

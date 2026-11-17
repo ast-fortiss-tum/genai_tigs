@@ -33,6 +33,10 @@ def mann_whitney(a, b) -> dict:
 
 
 def paired_t(a, b) -> dict:
+    diff = np.asarray(a, dtype=np.float64) - np.asarray(b, dtype=np.float64)
+    if diff.size < 2 or np.ptp(diff) < 1e-12:      # identical differences: t undefined (was ~1e15 from rounding)
+        return dict(t=float("nan"), p=float("nan"), d=float("nan"), mean_a=float(np.mean(a)),
+                    mean_b=float(np.mean(b)), degenerate=True)
     t, p = stats.ttest_rel(a, b)
     return dict(t=float(t), p=float(p), d=cohens_d_paired(a, b),
                 mean_a=float(np.mean(a)), mean_b=float(np.mean(b)))

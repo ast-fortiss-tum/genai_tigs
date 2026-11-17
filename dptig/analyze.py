@@ -11,6 +11,7 @@ import numpy as np
 
 from . import stats
 from .metrics import ClipExtractor, ResNetExtractor, load_images, subsample_scores
+from .metrics import diversity as eq6_diversity
 
 
 def load(run: Path):
@@ -32,14 +33,23 @@ def compare(fp: Path, dp: Path, levels=("low", "high"), diversity=False, device=
             res["iterations"] = stats.mann_whitney(it["dp"], it["fp"])
         if diversity:
             sc = {}
+            files = {n: [d / x["runs"][lv]["file"] for x in runs[n] if x["runs"][lv]["failed"]]
+                     for n, d in (("fp", fp), ("dp", dp))}
+            nmin = min(len(v) for v in files.values())
             for en, e in ext.items():
-                per = {}
-                for n, d in (("fp", fp), ("dp", dp)):
-                    files = [d / x["runs"][lv]["file"] for x in runs[n] if x["runs"][lv]["failed"]]
-                    per[n] = subsample_scores(e(load_images(files)), k, m, seed) if len(files) >= 2 else None
-                if per["fp"] is not None and per["dp"] is not None:
-                    sc[en] = per
-                    res[f"diversity_{en}"] = stats.paired_t(per["dp"], per["fp"])
+                if nmin < 2:
+                    continue
+                feats = {n: e(load_images(v)) for n, v in files.items()}
+                if nmin <= m:
+                    # every size-m subsample would be the whole set -> identical scores, degenerate t-test.
+                    # Report the full-set D (Eq. 6) descriptively, no test.
+                    res[f"diversity_{en}"] = dict(insufficient=True, n_fp=len(files["fp"]), n_dp=len(files["dp"]),
+                                                  m=m, D_dp=eq6_diversity(feats["dp"]), D_fp=eq6_diversity(feats["fp"]))
+                    continue
+                per = {n: subsample_scores(f, k, m, seed) for n, f in feats.items()}
+                sc[en] = per
+                res[f"diversity_{en}"] = dict(stats.paired_t(per["dp"], per["fp"]),
+                                              n_fp=len(files["fp"]), n_dp=len(files["dp"]))
             if len(sc) == 2:
                 res["diversity_corr"] = stats.correlations(
                     np.concatenate([sc["clip"]["dp"], sc["clip"]["fp"]]),
