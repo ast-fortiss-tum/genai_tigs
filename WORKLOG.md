@@ -98,6 +98,24 @@ If her weights arrive, prefer them (Table 2 comparability) and keep ours as a ch
 - **Open:** CelebA DP descriptors (paper: "attribute-specific constraints", not listed) -> pick with BLIP on generated
   seeds, confirm with co-authors; `delta_scale` in celebahq.yaml to follow the grid outcome.
 
+## 2026-11-17 (6): Phase 1 grid result (CIFAR-10 FP-TIG, 5 seeds x 4 configs, same latents)
+No crash in 3.5 h of E-core-pinned running (vs. crashes every 1-25 min on all cores) -> supports the CPU hypothesis.
+
+| config | low: fail | mean (median) it | high: fail | mean (median) it | GPU min |
+|---|---|---|---|---|---|
+| logit_d1 (default) | 4/5 | 105.4 (106) | 5/5 | 28.4 (22) | 61 |
+| logit_d2 (= legacy code) | 5/5 | 93.4 (64) | 5/5 | 9.4 (10) | 48 |
+| softmax_d1 (= paper text) | 5/5 | 108.2 (78) | 5/5 | 24.6 (20) | 62 |
+| softmax_d2 | 5/5 | 106.6 (84) | 5/5 | 10.8 (12) | 54 |
+| **paper FP** | 89.66% | 85.63 | 100% | 14.18 | |
+
+- Seeds valid 5/5 everywhere (paper 87%). Seed 0 (deer) fails at iteration 1 in every config (guidance switch, entry (2)).
+- **delta_scale:** high level, d2 needs fewer iterations than d1 for **all 8** non-trivial paired seeds (e.g. auto 17
+  vs 82). Paper's 14.18 sits near d2 (9-11), far from d1 (25-28). Low level: no clear effect, all near the paper.
+  -> evidence that the paper's numbers come from the legacy code (2x delta).
+- **fitness:** logit vs softmax margin indistinguishable at n=5 (same failure criterion, only ranking differs).
+- Caveat: 5 seeds; directional only. Waiting on Maryam to confirm which code produced Table 2.
+
 ## RESUME HERE (session closed 2026-11-15; continue on the new machine)
 State: `main` pushed (7c903a3 + this entry). 42 tests pass in conda env `dptig` (run `python -m unittest discover -s tests`;
 pytest is not installed). Dev Mac is for coding/tests only, no experiment runs. Follow `SETUP.md` on the new machine
