@@ -138,6 +138,17 @@ because their outputs exist.
 Planned once the CelebA seed check passes: drop LoRA epochs other than 5 (and 6 as fallback), kohya env (5.5 GB) and
 the fp32 SD weights in the HF cache (only kohya uses them) -- only if no LoRA retraining is needed.
 
+## 2026-11-17 (9): CelebA-HQ LoRA trained; seed check 60/60
+- LoRA (kohya v21.8.9, recovered recipe): 8550 steps, ~36 min on the 4090, final loss ~0.14. Kept epoch 5 (used) and
+  the final epoch-6 file as fallback; epochs 1-4 deleted.
+- Seed check (FP prompts, guidance 3.5, 20 per concept): **20/20 smiling, 20/20 bangs, 20/20 eyeglasses = 100% valid**
+  (paper 93-94%). Images are clearly faces with the target attribute.
+- **Bias to note:** "eye-glasses" seeds are almost all men with sunglasses, many dark-skinned and/or black-and-white
+  photo style -- the LoRA amplified the skew of the CelebA eyeglasses subset. "curtain-bangs" seeds are mostly blond women.
+  Matters for diversity (Table 3) and for what failures look like; discuss before the paper. Possible fix: balance
+  the LoRA training images by Male / Eyeglasses-vs-sunglasses. kohya env + fp32 SD weights kept until decided.
+- CelebA FP joins the overnight queue (gate: seed validity >= 0.5).
+
 ## RESUME HERE (session closed 2026-11-15; continue on the new machine)
 State: `main` pushed (7c903a3 + this entry). 42 tests pass in conda env `dptig` (run `python -m unittest discover -s tests`;
 pytest is not installed). Dev Mac is for coding/tests only, no experiment runs. Follow `SETUP.md` on the new machine
