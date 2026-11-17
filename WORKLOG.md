@@ -58,6 +58,20 @@ extension code/models are not available.
 - Note: the silent deaths are still unexplained; if `attempts.log` shows non-zero exits with no traceback, suspect
   the OOM killer / GPU memory (23.5 of 24 GB in use during the GA).
 
+## 2026-11-17 (4): Segfault in pure Python -> suspect CPU (i9-13900KF), grid pinned to E-cores
+- After the tgate fix, logit_d1 crashed with `Fatal Python error: Segmentation fault` (faulthandler) inside
+  `torch.nn.Module.named_modules` (pure Python, via diffusers `scale_lora_layers`) during a GA batch.
+  Together with the empty-closure-cell NameError and the silent deaths: crashes at **different places**, all looking
+  like memory corruption. A software bug would usually crash in the same place.
+- Machine: **i9-13900KF** (Raptor Lake; known Vmin-shift degradation -> random crashes under load), board Z790 UD AX,
+  **BIOS F6 (2023-07-24), predates Intel's fixes**. OS microcode is 0x133 (stops further degradation, cannot undo it).
+  No EDAC counters, no access to kernel logs. **Hypothesis, not proven.**
+- Test without root: grid relaunched pinned to the E-cores (`PIN="taskset -c 16-31" ./runs_grid.sh`; CPUs 0-15 are
+  P-cores). If the crashes stop, that supports the CPU hypothesis. tgate patch kept regardless (bit-identical output).
+- Launcher bug fixed: exit codes in attempts.log were always 0 (`$(date)` reset `$?`).
+- **For Andrea:** consider a BIOS update (Gigabyte Z790 UD AX, latest with Intel 0x12B+ microcode and "Intel Default
+  Settings") and a stress test (e.g. OCCT / y-cruncher / Prime95) to check whether the CPU is degraded.
+
 ## RESUME HERE (session closed 2026-11-15; continue on the new machine)
 State: `main` pushed (7c903a3 + this entry). 42 tests pass in conda env `dptig` (run `python -m unittest discover -s tests`;
 pytest is not installed). Dev Mac is for coding/tests only, no experiment runs. Follow `SETUP.md` on the new machine
