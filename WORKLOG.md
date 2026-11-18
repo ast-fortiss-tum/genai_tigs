@@ -63,6 +63,26 @@ Evidence: entries (6)-(11) below and `python -m dptig.summarize runs/main`. Numb
 
 **Not answerable by us:** MTurk validity / label preservation (RQ4-5) need a new human study.
 
+## REPRODUCTION STATUS BY RQ (2026-11-18, ~11:15)
+Progress: ~15% of Phase 5 (~120 of 800 FP/DP seed-runs = 100 latents x {FP,DP} x 4 tasks); 15 seeds per task/arm
+(CIFAR-10 FP at 30), CelebA FP only. Settings: delta_scale 2.0, logit_margin (entry (6)). Numbers: entry (11) and
+`python -m dptig.summarize runs/main`.
+
+| RQ | Paper's claim | Our status | Our result so far (15 seeds) |
+|---|---|---|---|
+| **RQ1** Seed generation (% valid seeds) | DP produces valid seeds as well or better | Measured on 3 tasks; CelebA FP only | **Contradicts**: DP loses more seeds. CIFAR-10 11/15 vs 14/15, teddy 8/15 vs 11/15, pizza 10/15 vs 11/15 (paper: DP higher on pizza 85 vs 73, teddy 92 vs 87). Not significant (p >= 0.33) |
+| **RQ2** Effectiveness (% failures found) | DP matches or beats FP | Measured on 3 tasks | **Agrees**: both ~100% everywhere, no difference. FP matches Table 2 (CIFAR-10 FP at 30 seeds: low 89% vs 89.66%) |
+| **RQ3** Efficiency (iterations to first failure) | DP generally fewer | Measured on 3 tasks | **Inconclusive, mostly opposite**: low level CIFAR-10 DP 91 vs FP 79, teddy 60 vs 46, pizza 53 vs 63 (paper: DP faster on CIFAR-10/teddy, slower on pizza; opposite on all 3). Not significant (p >= 0.34). 25-35% iteration-1 failures distort all arms (question 2) |
+| **RQ4** Validity (human, MTurk) | DP more valid inputs | **Not started** | Needs a new MTurk study (legacy survey HTML exists, not adapted) |
+| **RQ5** Label preservation (human) | Mixed | **Not started** | Same MTurk study |
+| **RQ6** Image diversity (CLIP / ResNet-50) | DP more diverse | Metric and analysis run; not yet testable | **Contradicts so far**: DP's D lower in 9 of 12 comparisons. Scale differs from Table 3 (~0.25 vs ~0.9, question 1). First CIFAR-10 test with enough images ~14:00 today |
+
+- **Solid:** the FP baseline. Our reimplementation reproduces Table 2's FP rows on CIFAR-10, pizza and teddy.
+- **Open:** every DP-vs-FP claim is so far directionally against the paper but not significant; 15 seeds is too few.
+  CIFAR-10 at 30 seeds is the first real test; RQ6 cannot be compared with Table 3 until question 1 is answered.
+- **Missing:** CelebA DP (descriptors, question 7), the human study (RQ4/RQ5), ~85% of the seed-runs
+  (~6-7 GPU-days at the current rate, less if priorities change).
+
 ## RESUME HERE (2026-11-18, GPU machine)
 State: `main` has local commits (not pushed). Env: conda env `dptig` (`~/miniforge3`); kohya env `kohya` for LoRA
 training. 51 tests pass (`python -m unittest discover -s tests`). Long runs: pin to E-cores (`taskset -c 16-31`).
