@@ -63,19 +63,19 @@ Evidence: entries (6)-(11) below and `python -m dptig.summarize runs/main`. Numb
 
 **Not answerable by us:** MTurk validity / label preservation (RQ4-5) need a new human study.
 
-## REPRODUCTION STATUS BY RQ (2026-11-18, ~11:15; CIFAR-10 / pizza 30-seed results added 13:00 / 15:20)
+## REPRODUCTION STATUS BY RQ (2026-11-18, ~11:15; CIFAR-10 / pizza / teddy 30-seed results added 13:00 / 15:20 / 16:30)
 Progress: ~15% of Phase 5 (~120 of 800 FP/DP seed-runs = 100 latents x {FP,DP} x 4 tasks); 15 seeds per task/arm
 (CIFAR-10 FP at 30), CelebA FP only. Settings: delta_scale 2.0, logit_margin (entry (6)). Numbers: entry (11) and
 `python -m dptig.summarize runs/main`.
 
 | RQ | Paper's claim | Our status | Our result so far (15 seeds) |
 |---|---|---|---|
-| **RQ1** Seed generation (% valid seeds) | DP produces valid seeds as well or better | Measured on 3 tasks; CelebA FP only | *30 seeds: CIFAR-10 DP 83% vs FP 93% (p=0.42; paper 84 vs 87, same direction); pizza DP 60% vs FP 77% (p=0.27; paper 85 vs 73, opposite).* At 15 seeds: DP loses more seeds. CIFAR-10 11/15 vs 14/15, teddy 8/15 vs 11/15, pizza 10/15 vs 11/15 (paper: DP higher on pizza 85 vs 73, teddy 92 vs 87). Not significant (p >= 0.33) |
+| **RQ1** Seed generation (% valid seeds) | DP produces valid seeds as well or better | Measured on 3 tasks; CelebA FP only | *30 seeds: CIFAR-10 DP 83% vs FP 93% (p=0.42; paper 84 vs 87, same direction); pizza DP 60% vs FP 77% (p=0.27; paper 85 vs 73, opposite); **teddy DP 50% vs FP 83%, p=0.013, significant, opposite to the paper (92 vs 87)**.* At 15 seeds: DP loses more seeds. CIFAR-10 11/15 vs 14/15, teddy 8/15 vs 11/15, pizza 10/15 vs 11/15 (paper: DP higher on pizza 85 vs 73, teddy 92 vs 87). Not significant (p >= 0.33) |
 | **RQ2** Effectiveness (% failures found) | DP matches or beats FP | Measured on 3 tasks | **Agrees**: both ~100% everywhere, no difference. FP matches Table 2 (CIFAR-10 FP at 30 seeds: low 89% vs 89.66%) |
-| **RQ3** Efficiency (iterations to first failure) | DP generally fewer | Measured on 3 tasks | *CIFAR-10 at 30 seeds: **same direction as the paper**, DP 68.5 vs FP 77.9 (low), 13.5 vs 16.5 (high), not significant (p=0.50/0.56). Pizza at 30: DP 56.9 vs FP 66.1 (p=0.83), paper DP much slower (123 vs 84), so opposite.* At 15 seeds, inconclusive and mostly opposite: low level CIFAR-10 DP 91 vs FP 79, teddy 60 vs 46, pizza 53 vs 63 (paper: DP faster on CIFAR-10/teddy, slower on pizza; opposite on all 3). Not significant (p >= 0.34). 25-35% iteration-1 failures distort all arms (question 2) |
+| **RQ3** Efficiency (iterations to first failure) | DP generally fewer | Measured on 3 tasks | *CIFAR-10 at 30 seeds: **same direction as the paper**, DP 68.5 vs FP 77.9 (low), 13.5 vs 16.5 (high), not significant (p=0.50/0.56). Pizza at 30: DP 56.9 vs FP 66.1 (p=0.83), paper DP much slower (123 vs 84), so opposite. Teddy at 30: DP 45.2 vs FP 38.2 (p=0.53), paper DP faster.* At 15 seeds, inconclusive and mostly opposite: low level CIFAR-10 DP 91 vs FP 79, teddy 60 vs 46, pizza 53 vs 63 (paper: DP faster on CIFAR-10/teddy, slower on pizza; opposite on all 3). Not significant (p >= 0.34). 25-35% iteration-1 failures distort all arms (question 2) |
 | **RQ4** Validity (human, MTurk) | DP more valid inputs | **Not started** | Needs a new MTurk study (legacy survey HTML exists, not adapted) |
 | **RQ5** Label preservation (human) | Mixed | **Not started** | Same MTurk study |
-| **RQ6** Image diversity (CLIP / ResNet-50) | DP more diverse | First test done (CIFAR-10, 30 seeds) | **Task-dependent**: pizza at 30 seeds DP more diverse in 4/4 (descriptive, paper's way). CIFAR-10 at 30 seeds, DP never more diverse, significantly less in 2 of 4 (CLIP low d=-0.68, ResNet high d=-1.6), but p-values are inflated by overlapping subsamples (entry (12)). At 15 seeds DP's D lower in 9 of 12. Scale differs from Table 3 (~0.25 vs ~0.9, question 1). CLIP and ResNet D uncorrelated (r=0.02) |
+| **RQ6** Image diversity (CLIP / ResNet-50) | DP more diverse | First test done (CIFAR-10, 30 seeds) | **Task-dependent**: pizza at 30 seeds DP more diverse in 4/4 (descriptive, paper's way); teddy about even (2/4). CIFAR-10 at 30 seeds, DP never more diverse, significantly less in 2 of 4 (CLIP low d=-0.68, ResNet high d=-1.6), but p-values are inflated by overlapping subsamples (entry (12)). At 15 seeds DP's D lower in 9 of 12. Scale differs from Table 3 (~0.25 vs ~0.9, question 1). CLIP and ResNet D uncorrelated (r=0.02) |
 
 - **Solid:** the FP baseline. Our reimplementation reproduces Table 2's FP rows on CIFAR-10, pizza and teddy.
 - **Open:** every DP-vs-FP claim is so far directionally against the paper but not significant; 15 seeds is too few.
@@ -92,6 +92,26 @@ training. 51 tests pass (`python -m unittest discover -s tests`). Long runs: pin
   CelebA LoRA rebalancing + descriptors), then continue Phase 5. MTurk assets remain (Phase 4).
 
 ---
+
+## 2026-11-18 (14): ImageNet teddy FP vs DP at 30 seeds -- first significant difference (RQ1, against the paper)
+`runs/main/analysis/imagenet_teddy_fp_vs_dp_n30_1628.json`:
+
+| | DP | FP | test | paper DP vs FP |
+|---|---|---|---|---|
+| seeds valid (RQ1) | **15/30 (50%)** | **25/30 (83%)** | **Fisher p=0.013** | 92 vs 87 |
+| failures low / high (RQ2) | 15/15, 15/15 | 25/25, 25/25 | p=1.0 | 98.91/100 vs 98.85/100 |
+| mean (median) iters low (RQ3) | 45.2 (39) | 38.2 (23) | MW p=0.53 | 40.79 vs 48.45 |
+| mean (median) iters high | 4.0 (3) | 4.6 (2) | MW p=0.98 | 4.88 vs 6.63 |
+| CLIP D low / high (RQ6) | 0.273 / 0.274 | 0.271 / 0.264 | no test (15 DP images) | DP higher |
+| ResNet D low / high | 0.279 / 0.297 | 0.294 / 0.295 | no test | DP higher |
+
+- **RQ1, significant, opposite to the paper:** DP teddy prompts ("on a bed", "sitting on a chair", ...) lose half
+  the seeds (classifier predicts e.g. class 191/260 instead of teddy). Fewer valid seeds also means fewer failure
+  images for RQ6 (only 15).
+- RQ3: no difference. RQ6: about even (DP higher in 2/4, descriptive).
+- Teddy FP reproduces Table 2's FP row (83% seeds vs 87; 100% failures; high iters 4.6 vs 6.63). Iteration-1 failures
+  are frequent for teddy FP (7 low / 10 high of 25).
+- Queue: CelebA FP to 30 started 16:29 (~4.5 h), end of the 30-seed round ~21:00.
 
 ## 2026-11-18 (13): ImageNet pizza FP vs DP at 30 seeds
 `runs/main/analysis/imagenet_pizza_fp_vs_dp_n30_1520.json`:
