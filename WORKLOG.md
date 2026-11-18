@@ -17,7 +17,7 @@ extension code/models are not available.
 | 2b | LLM-free `dp-template` ablation arm | done; skipped automatically where identical to DP (pizza) |
 | 3 | CelebA-HQ (classifier, LoRA, logit fitness) | **replicated** (authors' weights unavailable): classifier 91.3% on CelebA-HQ, LoRA seed validity 60/60; FP runs 15 seeds |
 | 4 | Diversity metrics (CLIP/ResNet-50), statistics, MTurk assets | metrics/stats/analysis done and run on real images; MTurk + label preservation todo (need human data) |
-| 5 | Full experiment (100 latents x {FP,DP} x {low,high} x 4 tasks) | **running** in rounds (15 seeds everywhere, CIFAR-10 at 30); `scripts/overnight.sh`, `runs/main/` |
+| 5 | Full experiment (100 latents x {FP,DP} x {low,high} x 4 tasks) | **paused** (waiting for Maryam's code): FP/DP at 30 seeds for CIFAR-10, pizza, teddy; CelebA FP at 19; `runs/main/` |
 
 ## QUESTIONS FOR THE 2026-11-18 MEETING (Andrea + V. Riccio)
 Evidence: entries (6)-(11) below and `python -m dptig.summarize runs/main`. Numbers are from our reimplementation
@@ -86,12 +86,25 @@ Progress: ~15% of Phase 5 (~120 of 800 FP/DP seed-runs = 100 latents x {FP,DP} x
 ## RESUME HERE (2026-11-18, GPU machine)
 State: `main` has local commits (not pushed). Env: conda env `dptig` (`~/miniforge3`); kohya env `kohya` for LoRA
 training. 51 tests pass (`python -m unittest discover -s tests`). Long runs: pin to E-cores (`taskset -c 16-31`).
-- Running: `scripts/overnight.sh` (rounds of FP/DP to 15/30/50/100 seeds), progress in `runs/main/status.log`,
-  analyses in `runs/main/analysis/`, summary table: `python -m dptig.summarize runs/main`.
+- **Runs stopped 2026-11-18 18:40, waiting for Maryam's code (entry (15)).** Resume with
+  `PIN="taskset -c 16-31" ./scripts/overnight.sh`; progress in `runs/main/status.log`, analyses in
+  `runs/main/analysis/`, summary table: `python -m dptig.summarize runs/main`.
 - Next after the meeting: act on the questions above (diversity definition, iteration-1 handling, prompt variety,
   CelebA LoRA rebalancing + descriptors), then continue Phase 5. MTurk assets remain (Phase 4).
 
 ---
+
+## 2026-11-18 (15): All runs STOPPED (18:40) -- waiting for Maryam's code
+Andrea's decision: stop the experiment until we have Maryam's original code/weights; otherwise we risk spending
+GPU-days on a setup that differs from the one behind the paper (settings, diversity definition, CelebA models).
+- Stopped: `scripts/overnight.sh` and the running CelebA FP run (seed 19 in progress, lost; resumable), the
+  30-minute progress job. GPU idle.
+- State at stop: CIFAR-10 / pizza / teddy FP+DP at **30 seeds**, dp-template at 15 (CIFAR-10, teddy; pizza skipped),
+  CelebA FP at **19**. All results in `runs/main/` (records + failure images), analyses in `runs/main/analysis/`.
+- **To resume**: `PIN="taskset -c 16-31" ./scripts/overnight.sh` (it skips everything already done; first step is
+  CelebA FP to 30). Change configs first if Maryam's code says so (delta_scale, fitness, guidance, diversity).
+- What to ask Maryam: the meeting questions above, in particular (1) the code that produced Table 2/3 (settings,
+  Eq. 6 / diversity score), (5) delta and fitness actually used, (6) original CelebA classifier + LoRA.
 
 ## 2026-11-18 (14): ImageNet teddy FP vs DP at 30 seeds -- first significant difference (RQ1, against the paper)
 `runs/main/analysis/imagenet_teddy_fp_vs_dp_n30_1628.json`:
