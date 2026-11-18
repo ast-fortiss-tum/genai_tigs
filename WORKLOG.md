@@ -17,7 +17,7 @@ extension code/models are not available.
 | 2b | LLM-free `dp-template` ablation arm | done; skipped automatically where identical to DP (pizza) |
 | 3 | CelebA-HQ (classifier, LoRA, logit fitness) | **replicated** (authors' weights unavailable): classifier 91.3% on CelebA-HQ, LoRA seed validity 60/60; FP runs 15 seeds |
 | 4 | Diversity metrics (CLIP/ResNet-50), statistics, MTurk assets | metrics/stats/analysis done and run on real images; MTurk + label preservation todo (need human data) |
-| 5 | Full experiment (100 latents x {FP,DP} x {low,high} x 4 tasks) | **paused** (waiting for Maryam's code): FP/DP at 30 seeds for CIFAR-10, pizza, teddy; CelebA FP at 19; `runs/main/` |
+| 5 | Full experiment (100 latents x {FP,DP} x {low,high} x 4 tasks) | **paused** (waiting for Maryam's code): FP/DP at 30 seeds for CIFAR-10, pizza, teddy; CelebA FP at 20; `runs/main/` |
 
 ## QUESTIONS FOR THE 2026-11-18 MEETING (Andrea + V. Riccio)
 Evidence: entries (6)-(11) below and `python -m dptig.summarize runs/main`. Numbers are from our reimplementation
@@ -97,14 +97,34 @@ training. 51 tests pass (`python -m unittest discover -s tests`). Long runs: pin
 ## 2026-11-18 (15): All runs STOPPED (18:40) -- waiting for Maryam's code
 Andrea's decision: stop the experiment until we have Maryam's original code/weights; otherwise we risk spending
 GPU-days on a setup that differs from the one behind the paper (settings, diversity definition, CelebA models).
-- Stopped: `scripts/overnight.sh` and the running CelebA FP run (seed 19 in progress, lost; resumable), the
+- Stopped: `scripts/overnight.sh` and the running CelebA FP run (seed 20 in progress, lost; resumable), the
   30-minute progress job. GPU idle.
 - State at stop: CIFAR-10 / pizza / teddy FP+DP at **30 seeds**, dp-template at 15 (CIFAR-10, teddy; pizza skipped),
-  CelebA FP at **19**. All results in `runs/main/` (records + failure images), analyses in `runs/main/analysis/`.
+  CelebA FP at **20**. All results in `runs/main/` (records + failure images), analyses in `runs/main/analysis/`.
 - **To resume**: `PIN="taskset -c 16-31" ./scripts/overnight.sh` (it skips everything already done; first step is
   CelebA FP to 30). Change configs first if Maryam's code says so (delta_scale, fitness, guidance, diversity).
 - What to ask Maryam: the meeting questions above, in particular (1) the code that produced Table 2/3 (settings,
   Eq. 6 / diversity score), (5) delta and fitness actually used, (6) original CelebA classifier + LoRA.
+
+- Final results table at the stop (`python -m dptig.summarize runs/main`; fail = failures found / searches on valid
+  seeds; it=1 = failures at iteration 1; paper = Table 2):
+
+| task | arm | seeds valid | low: fail | low: mean (median) it | low: it=1 | high: fail | high: mean (median) it | high: it=1 | paper %seeds / low fail%, it / high fail%, it |
+|---|---|---|---|---|---|---|---|---|---|
+| celebahq | fp | 20/20 | 9/20 | 121.1 (116) | 1 | 20/20 | 28.8 (27) | 1 | 94 / 24.73, 18.22 / 91.47, 56.08 |
+| cifar10 | fp | 28/30 | 25/28 | 77.9 (64) | 6 | 28/28 | 16.5 (10) | 7 | 87 / 89.66, 85.63 / 100, 14.18 |
+| cifar10 | dp | 25/30 | 22/25 | 68.5 (38) | 8 | 25/25 | 13.5 (9) | 9 | 84 / 92.86, 74.73 / 100, 9.89 |
+| cifar10 | dp-template | 11/15 | 10/11 | 78.1 (68) | 4 | 11/11 | 12.2 (9) | 4 |  |
+| imagenet_pizza | fp | 23/30 | 23/23 | 66.1 (51) | 4 | 23/23 | 10.9 (7) | 5 | 73 / 97.26, 83.6 / 100, 12.53 |
+| imagenet_pizza | dp | 18/30 | 18/18 | 56.9 (50) | 3 | 18/18 | 9.6 (8) | 4 | 85 / 88.24, 123.28 / 100, 20.14 |
+| imagenet_teddy | fp | 25/30 | 25/25 | 38.2 (23) | 7 | 25/25 | 4.6 (2) | 10 | 87 / 98.85, 48.45 / 100, 6.63 |
+| imagenet_teddy | dp | 15/30 | 15/15 | 45.2 (39) | 3 | 15/15 | 4.0 (3) | 6 | 92 / 98.91, 40.79 / 100, 4.88 |
+| imagenet_teddy | dp-template | 9/15 | 9/9 | 50.9 (44) | 1 | 9/9 | 4.8 (4) | 4 |  |
+
+- CelebA FP (20 seeds, our retrained models): low level 9/20 failures, the last 6 low-level searches all hit the
+  250-iteration cap (eyeglasses/smiling/bangs alike); high level 20/20. Its rate is approaching the paper's 25%.
+- Disk at stop: 68 GB free. Kept for a possible CelebA LoRA retrain: kohya env (`~/miniforge3/envs/kohya`) and the fp32
+  SD weights in the HF cache (~9 GB together); delete them if Maryam's CelebA weights arrive.
 
 ## 2026-11-18 (14): ImageNet teddy FP vs DP at 30 seeds -- first significant difference (RQ1, against the paper)
 `runs/main/analysis/imagenet_teddy_fp_vs_dp_n30_1628.json`:
