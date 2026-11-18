@@ -170,6 +170,51 @@ the fp32 SD weights in the HF cache (only kohya uses them) -- only if no LoRA re
 - Queue restarted at 19:11 without losing work (old bash parent stopped, running pizza FP left to finish; new queue
   waits for it).
 
+## 2026-11-18 (11): Overnight results, 15 seeds per task x arm (delta_scale 2.0, logit_margin)
+Queue ran 17:56 -> 08:09 with **no crash** (E-core pinning, ~19 h crash-free in total). 30-seed round started 08:09.
+`python -m dptig.summarize runs/main` (new) gives:
+
+| task | arm | seeds valid | low: fail | low: mean (median) it | low: it=1 | high: fail | high: mean (median) it | high: it=1 | paper %seeds / low fail%, it / high fail%, it |
+|---|---|---|---|---|---|---|---|---|---|
+| celebahq | fp | 15/15 | 9/15 | 121.1 (116) | 1 | 15/15 | 26.9 (23) | 1 | 94 / 24.73, 18.22 / 91.47, 56.08 |
+| cifar10 | fp | 14/15 | 13/14 | 78.8 (67) | 3 | 14/14 | 11.1 (9) | 4 | 87 / 89.66, 85.63 / 100, 14.18 |
+| cifar10 | dp | 11/15 | 11/11 | 91.1 (71) | 4 | 11/11 | 12.4 (9) | 4 | 84 / 92.86, 74.73 / 100, 9.89 |
+| cifar10 | dp-template | 11/15 | 10/11 | 78.1 (68) | 4 | 11/11 | 12.2 (9) | 4 |  |
+| imagenet_pizza | fp | 11/15 | 11/11 | 63.1 (25) | 3 | 11/11 | 11.1 (4) | 3 | 73 / 97.26, 83.6 / 100, 12.53 |
+| imagenet_pizza | dp | 10/15 | 10/10 | 52.7 (37) | 3 | 10/10 | 10.0 (7) | 4 | 85 / 88.24, 123.28 / 100, 20.14 |
+| imagenet_teddy | fp | 11/15 | 11/11 | 45.7 (28) | 3 | 11/11 | 5.0 (4) | 4 | 87 / 98.85, 48.45 / 100, 6.63 |
+| imagenet_teddy | dp | 8/15 | 8/8 | 60.1 (54) | 0 | 8/8 | 5.0 (4) | 3 | 92 / 98.91, 40.79 / 100, 4.88 |
+| imagenet_teddy | dp-template | 9/15 | 9/9 | 50.9 (44) | 1 | 9/9 | 4.8 (4) | 4 |  |
+
+(fail = failures found / searches on valid seeds; it=1 = failures already at iteration 1; paper = Table 2.)
+
+FP vs DP tests (`runs/main/analysis/*_n15_*.json`): **no significant difference anywhere** (seeds: Fisher p 0.33 /
+1.00 / 0.45; iterations: Mann-Whitney p 0.34-1.00, |d| <= 0.25). Diversity still descriptive (<= 20 images per arm):
+
+| task | level | CLIP D: DP / FP | ResNet D: DP / FP |
+|---|---|---|---|
+| cifar10 | low | 0.253 / 0.259 | 0.262 / 0.300 |
+| cifar10 | high | 0.247 / 0.266 | 0.271 / 0.280 |
+| pizza | low | 0.176 / 0.155 | 0.199 / 0.155 |
+| pizza | high | 0.173 / 0.199 | 0.218 / 0.219 |
+| teddy | low | 0.262 / 0.297 | 0.265 / 0.303 |
+| teddy | high | 0.266 / 0.273 | 0.296 / 0.302 |
+
+Findings so far (n=15, preliminary):
+1. **DP is not more diverse than FP**: DP's D is lower in 9 of 12 comparisons (higher only for pizza at the low
+   level). Paper Table 3 claims DP clearly more diverse (and on a ~0.8-0.95 scale vs our ~0.15-0.30, see (10)).
+2. **DP loses more seeds** on CIFAR-10 (11/15 vs 14/15; animals "in water") and teddy (8/15 vs 11/15); paper reports DP
+   with *more* valid seeds for pizza/teddy.
+3. **Iteration-1 failures are common in every arm** (~25-35% of valid seeds): mutants at guidance 1.4 lose the label
+   immediately, so these "failures" come from the seed/mutation guidance switch, not from the search. They pull mean
+   iterations down equally in all arms. Worth reporting/excluding; ask co-authors.
+4. FP vs paper: CIFAR-10 / pizza / teddy FP failure rates and high-level iterations match Table 2 closely
+   (e.g. CIFAR high 11.1 vs 14.18, teddy high 5.0 vs 6.63); low-level iterations are lower than the paper (it=1 cases).
+5. CelebA FP (our retrained models): low level 9/15 failures (paper 25%), high 15/15 (paper 91%), mean high iterations
+   26.9 vs 56.1. Eyeglasses and smiling resist the low step (4 of 6 low-level misses), bangs is easier.
+6. dp-template behaves like DP (expected: identical prompts on 58% CIFAR / 28% teddy latents, results reproduce
+   exactly when the prompt is identical).
+
 ## RESUME HERE (session closed 2026-11-15; continue on the new machine)
 State: `main` pushed (7c903a3 + this entry). 42 tests pass in conda env `dptig` (run `python -m unittest discover -s tests`;
 pytest is not installed). Dev Mac is for coding/tests only, no experiment runs. Follow `SETUP.md` on the new machine

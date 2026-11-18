@@ -101,3 +101,22 @@ class SmallSampleTests(unittest.TestCase):
         self.assertTrue(r["low"]["diversity_clip"]["insufficient"])
         self.assertIn("D_dp", r["low"]["diversity_clip"])
         self.assertNotIn("insufficient", r2["low"]["diversity_clip"])
+
+
+class SummarizeTests(unittest.TestCase):
+    def test_summarize_dir_counts(self):
+        import json, tempfile
+        from pathlib import Path
+        from dptig.summarize import summarize_dir, table
+        rows = [dict(n=0, seed_ok=False, runs={}),
+                dict(n=1, seed_ok=True, runs={"low": dict(failed=True, iterations=1), "high": dict(failed=True, iterations=1)}),
+                dict(n=2, seed_ok=True, runs={"low": dict(failed=False, iterations=250), "high": dict(failed=True, iterations=9)})]
+        with tempfile.TemporaryDirectory() as t:
+            d = Path(t) / "cifar10_fp"; d.mkdir()
+            (d / "records.jsonl").write_text("\n".join(json.dumps(r) for r in rows))
+            s = summarize_dir(d)
+            md = table(Path(t))
+        self.assertEqual((s["n"], s["valid"]), (3, 2))
+        self.assertEqual((s["low"]["searched"], s["low"]["failed"], s["low"]["it1"]), (2, 1, 1))
+        self.assertEqual(s["high"]["mean"], 5)
+        self.assertIn("| cifar10 | fp | 2/3 | 1/2 |", md)
