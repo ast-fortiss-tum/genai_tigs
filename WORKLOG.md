@@ -63,19 +63,19 @@ Evidence: entries (6)-(11) below and `python -m dptig.summarize runs/main`. Numb
 
 **Not answerable by us:** MTurk validity / label preservation (RQ4-5) need a new human study.
 
-## REPRODUCTION STATUS BY RQ (2026-11-18, ~11:15)
+## REPRODUCTION STATUS BY RQ (2026-11-18, ~11:15; CIFAR-10 30-seed results added 13:00)
 Progress: ~15% of Phase 5 (~120 of 800 FP/DP seed-runs = 100 latents x {FP,DP} x 4 tasks); 15 seeds per task/arm
 (CIFAR-10 FP at 30), CelebA FP only. Settings: delta_scale 2.0, logit_margin (entry (6)). Numbers: entry (11) and
 `python -m dptig.summarize runs/main`.
 
 | RQ | Paper's claim | Our status | Our result so far (15 seeds) |
 |---|---|---|---|
-| **RQ1** Seed generation (% valid seeds) | DP produces valid seeds as well or better | Measured on 3 tasks; CelebA FP only | **Contradicts**: DP loses more seeds. CIFAR-10 11/15 vs 14/15, teddy 8/15 vs 11/15, pizza 10/15 vs 11/15 (paper: DP higher on pizza 85 vs 73, teddy 92 vs 87). Not significant (p >= 0.33) |
+| **RQ1** Seed generation (% valid seeds) | DP produces valid seeds as well or better | Measured on 3 tasks; CelebA FP only | *CIFAR-10 at 30 seeds: DP 83% vs FP 93% (p=0.42); paper 84 vs 87, so same direction.* At 15 seeds: DP loses more seeds. CIFAR-10 11/15 vs 14/15, teddy 8/15 vs 11/15, pizza 10/15 vs 11/15 (paper: DP higher on pizza 85 vs 73, teddy 92 vs 87). Not significant (p >= 0.33) |
 | **RQ2** Effectiveness (% failures found) | DP matches or beats FP | Measured on 3 tasks | **Agrees**: both ~100% everywhere, no difference. FP matches Table 2 (CIFAR-10 FP at 30 seeds: low 89% vs 89.66%) |
-| **RQ3** Efficiency (iterations to first failure) | DP generally fewer | Measured on 3 tasks | **Inconclusive, mostly opposite**: low level CIFAR-10 DP 91 vs FP 79, teddy 60 vs 46, pizza 53 vs 63 (paper: DP faster on CIFAR-10/teddy, slower on pizza; opposite on all 3). Not significant (p >= 0.34). 25-35% iteration-1 failures distort all arms (question 2) |
+| **RQ3** Efficiency (iterations to first failure) | DP generally fewer | Measured on 3 tasks | *CIFAR-10 at 30 seeds: **same direction as the paper**, DP 68.5 vs FP 77.9 (low), 13.5 vs 16.5 (high), not significant (p=0.50/0.56).* At 15 seeds, inconclusive and mostly opposite: low level CIFAR-10 DP 91 vs FP 79, teddy 60 vs 46, pizza 53 vs 63 (paper: DP faster on CIFAR-10/teddy, slower on pizza; opposite on all 3). Not significant (p >= 0.34). 25-35% iteration-1 failures distort all arms (question 2) |
 | **RQ4** Validity (human, MTurk) | DP more valid inputs | **Not started** | Needs a new MTurk study (legacy survey HTML exists, not adapted) |
 | **RQ5** Label preservation (human) | Mixed | **Not started** | Same MTurk study |
-| **RQ6** Image diversity (CLIP / ResNet-50) | DP more diverse | Metric and analysis run; not yet testable | **Contradicts so far**: DP's D lower in 9 of 12 comparisons. Scale differs from Table 3 (~0.25 vs ~0.9, question 1). First CIFAR-10 test with enough images ~14:00 today |
+| **RQ6** Image diversity (CLIP / ResNet-50) | DP more diverse | First test done (CIFAR-10, 30 seeds) | **Contradicts**: CIFAR-10 at 30 seeds, DP never more diverse, significantly less in 2 of 4 (CLIP low d=-0.68, ResNet high d=-1.6), but p-values are inflated by overlapping subsamples (entry (12)). At 15 seeds DP's D lower in 9 of 12. Scale differs from Table 3 (~0.25 vs ~0.9, question 1). CLIP and ResNet D uncorrelated (r=0.02) |
 
 - **Solid:** the FP baseline. Our reimplementation reproduces Table 2's FP rows on CIFAR-10, pizza and teddy.
 - **Open:** every DP-vs-FP claim is so far directionally against the paper but not significant; 15 seeds is too few.
@@ -92,6 +92,31 @@ training. 51 tests pass (`python -m unittest discover -s tests`). Long runs: pin
   CelebA LoRA rebalancing + descriptors), then continue Phase 5. MTurk assets remain (Phase 4).
 
 ---
+
+## 2026-11-18 (12): CIFAR-10 FP vs DP at 30 seeds (first diversity test with enough images)
+`runs/main/analysis/cifar10_fp_vs_dp_n30_1300.json`:
+
+| | DP | FP | test | paper DP vs FP |
+|---|---|---|---|---|
+| seeds valid (RQ1) | 25/30 (83%) | 28/30 (93%) | Fisher p=0.42 | 84 vs 87 |
+| low: failures (RQ2) | 22/25 | 25/28 | p=1.0 | 92.86 vs 89.66 |
+| low: mean (median) iters (RQ3) | 68.5 (38) | 77.9 (64) | MW p=0.50, d=-0.12 | 74.73 vs 85.63 |
+| high: mean (median) iters (RQ3) | 13.5 (9) | 16.5 (10) | MW p=0.56, d=-0.16 | 9.89 vs 14.18 |
+| CLIP D low (RQ6) | 0.236 | 0.243 | paired t p=0.0008, d=-0.68 | DP higher |
+| ResNet D low | 0.329 | 0.325 | p=0.08 | DP higher |
+| CLIP D high | 0.250 | 0.249 | p=0.61 | DP higher |
+| ResNet D high | 0.307 | 0.328 | p<0.001, d=-1.6 | DP higher |
+
+- RQ1/RQ3 now go **in the paper's direction** (DP ~10% fewer iterations, almost the same gap as Table 2), not
+  significant. At 15 seeds RQ3 pointed the other way -> 15-seed directions were noise.
+- RQ6 **contradicts the paper**: DP never more diverse; significantly less in 2/4 comparisons.
+- **Caveat (important):** diversity p-values come from k=30 subsets of m=20 images drawn from only 22-28 images per
+  arm. The subsets overlap almost entirely, so they are not independent and the paired t-test overstates
+  significance. Direction is reliable, the p-values are not. Needs the co-authors' definition of one diversity score
+  (question 1); alternatives: one D per run repeat, bootstrap CI of the difference, or per-class D.
+- CLIP vs ResNet diversity correlation r=0.02 (Pearson) / 0.03 (Spearman) at both levels: the two measures do not
+  agree here (the paper reports their correlation as consistency evidence).
+- Iteration-1 failures: DP 8 (low) / 9 (high) of 25, FP 6 / 7 of 28.
 
 ## 2026-11-18 (11): Overnight results, 15 seeds per task x arm (delta_scale 2.0, logit_margin)
 Queue ran 17:56 -> 08:09 with **no crash** (E-core pinning, ~19 h crash-free in total). 30-seed round started 08:09.
