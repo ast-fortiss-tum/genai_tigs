@@ -17,7 +17,7 @@ extension code/models are not available.
 | 2b | LLM-free `dp-template` ablation arm | done; skipped automatically where identical to DP (pizza) |
 | 3 | CelebA-HQ (classifier, LoRA, logit fitness) | **replicated** (authors' weights unavailable): classifier 91.3% on CelebA-HQ, LoRA seed validity 60/60; FP runs 15 seeds |
 | 4 | Diversity metrics (CLIP/ResNet-50), statistics, MTurk assets | metrics/stats/analysis done and run on real images; MTurk + label preservation todo (need human data) |
-| 5 | Full experiment (100 latents x {FP,DP} x {low,high} x 4 tasks) | **paused** (waiting for Maryam's code): FP/DP at 30 seeds for CIFAR-10, pizza, teddy; CelebA FP at 20; `runs/main/` |
+| 5 | Full experiment (100 latents x {FP,DP} x {low,high} x 4 tasks) | **paused; Maryam's code received 2026-11-24 (entry 16), config decisions pending**: FP/DP at 30 seeds for CIFAR-10, pizza, teddy; CelebA FP at 20; `runs/main/` |
 
 ## QUESTIONS FOR THE 2026-11-18 MEETING (Andrea + V. Riccio)
 Evidence: entries (6)-(11) below and `python -m dptig.summarize runs/main`. Numbers are from our reimplementation
@@ -91,6 +91,57 @@ training. 51 tests pass (`python -m unittest discover -s tests`). Long runs: pin
   `runs/main/analysis/`, summary table: `python -m dptig.summarize runs/main`.
 - Next after the meeting: act on the questions above (diversity definition, iteration-1 handling, prompt variety,
   CelebA LoRA rebalancing + descriptors), then continue Phase 5. MTurk assets remain (Phase 4).
+
+---
+
+## 2026-11-24 (16): Maryam's code and weights received -- what they settle
+Source: https://github.com/deeptestai/genai_tigs_diversity (cloned to `~/repos/maryam_src/`, not vendored) + the 3 Drive
+zips linked in its README. Her generators are single-config scripts (one task/level per file), so settings below are
+what the files contain; the "low"/"high" value may be edited by hand between runs.
+
+**Weights (now in `weights/`, gitignored)**
+- Concept LoRAs (CIFAR-10, pizza, teddy) and CIFAR-10 classifier: **byte-identical** (sha256) to ours -> FP baseline confirmed.
+- New: style LoRAs `weights/lora/style/{cifar10,pizza,teddy}_style-*.safetensors` (trigger tokens: grsxgrass/rdpxroad/
+  wtrsxstyle; plate_style/pepperoni_style/slice_appearance; bed/chair/table); CelebA LoRA
+  `weights/lora/celebahq_maryam-000002.safetensors` (rank 128, 4500 imgs, triggers "smiling-face person",
+  "curtain-bangs person", "eye-glasses person", reg. class "person"); CelebA classifier
+  `weights/classifiers/celeba_maryam/` (ResNet-50, same as ours; load with `backbone.` prefix stripped). Checked: loads, target attribute present on 21/21 of our CelebA seeds (ours: 21/21).
+- Removed: the downloaded zips (~0.9 GB; re-download with `gdown <id>`, ids in her README).
+
+**Answers to the meeting questions (entry list above)**
+1. **Table 3 diversity is NOT Eq. 6.** `diversity/compute_diversity_*.py`: KMeans (n_init=10, seed 0) on the union of
+   FP_LOW/FP_HIGH/DP_LOW/DP_HIGH embeddings for K in {2,4,...,12}; per group D = coverage (occupied clusters / K) x
+   normalised Shannon entropy of the cluster histogram. CLIP ViT-B/32 L2-normalised; ResNet-50 IMAGENET1K_V2 raw.
+   `paired-ttest.py` then pairs the **6 K values** (n=6) FP vs DP. Applied to our 30-seed images
+   (`scripts/analysis/maryam_cluster_diversity.py`): CIFAR-10 0.93-0.96, teddy 0.80-0.88, pizza 0.46-0.84 -> **Table 3
+   scale reproduced; the mismatch was the metric.** FP vs DP with her metric: no significant difference except CIFAR-10
+   ResNet HIGH/OVERALL (FP more diverse, p=0.012/0.023); pizza DP higher (n.s.). Methodological concern: the 6 K values
+   are not independent samples, so the t-test p-values are not meaningful as written.
+5. **Delta and fitness:** raw-logit margin (matches our `logit_margin`); CIFAR-10 file has 0.02183 = range/1000 x 2,
+   pizza/teddy 0.002156 = range/10000 x 2 -> **delta_scale 2.0 confirmed**. Adaptive step x2 on stall, reset otherwise,
+   not reset between seeds; clamp to bounds (as legacy). Guidance 3.5 seed / 1.4 mutants confirmed.
+7. **CelebA DP descriptors:** smile {soft smile, open-mouth smile}, bangs colour {brown, blonde}, glasses colour
+   {black, brown, transparent}; the LLM picks one ("A photo of a person with [descriptor] [attribute]").
+3. **LLM = template by construction for pizza/teddy:** her instructions dictate "A photo of a pizza {style_phrase}" /
+   "A photo of teddy bear sit on a {bed|chair|table}". CIFAR-10 instruction differs from Fig. 3 (class+style, phrase at
+   the end). One LLM call per latent, no retry; invalid output -> latent skipped.
+
+**New discrepancies (not in the paper; contradict the 2026-11-13 (3) "no style LoRA" answer)**
+- **DP arms merge a style LoRA** with the concept LoRA: CIFAR-10 0.7/0.3, pizza 0.5/0.5, **teddy 0.01/0.3** (concept
+  LoRA practically off). FP (legacy) uses the concept LoRA only -> FP vs DP differ in prompt AND weights (confound).
+  Style trigger tokens never appear in the DP prompts.
+- **CelebA GA differs:** single `celebsty` LoRA, prompts "A photo of <attr> person", fitness = target logit (same as
+  ours), **no clamping**, step **x0.75 on stall** (not x2); bounds/deltas come from `celeb_sd_params` (not in the repo:
+  ask Maryam). FP reseeds the latent generator per seed (seed+n), DP draws latents sequentially from seed 0, so CelebA
+  FP/DP latents are not paired.
+- Saved images used for diversity: CIFAR-10 = 32x32 classifier input; ImageNet = 224 crop, min-max rescaled; CelebA =
+  224x224 de-normalised. Best image is saved even when no failure was found.
+- RQ4/RQ5: her repo contains the MTurk batches and answers (`evaluation_results/mturk-evaluation/`) -> these RQs can be
+  reanalysed from existing human data instead of a new study.
+
+**Not done / decisions for Andrea before resuming runs:** (a) DP with style LoRA (paper setup) vs without (clean
+comparison) -- or both; (b) switch CelebA to her LoRA/classifier/prompts/GA variant (needs `celeb_sd_params`);
+(c) adopt her cluster metric as the Table-3 metric in `dptig.metrics` (keep Eq. 6 alongside). No runs launched.
 
 ---
 
