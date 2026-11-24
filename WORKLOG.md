@@ -94,6 +94,11 @@ training. 51 tests pass (`python -m unittest discover -s tests`). Long runs: pin
 
 ---
 
+## 2026-11-24 (18): RQ6 decision -- ResNet-50 is the reported metric
+Andrea: compute both CLIP and ResNet-50 (analyses keep doing so), but the paper will most likely report **ResNet-50
+only** for RQ6. CLIP stays in the analysis JSONs as a secondary check. (So far ResNet is also the only feature space
+with a result robust to the KMeans seed: teddy, entry (17) follow-up.)
+
 ## 2026-11-24 (17): Decisions applied -- dp-paper arm, CelebA on Maryam's LoRA, Table-3 metric; queue launched
 Andrea's decisions on entry (16): run **both** DP arms, switch CelebA to **her LoRA**, adopt her **cluster metric**.
 
