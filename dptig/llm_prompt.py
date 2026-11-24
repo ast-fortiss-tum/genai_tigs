@@ -49,6 +49,13 @@ class LlamaCppBackend:
             temperature=self.temperature, top_p=self.top_p, seed=seed, max_tokens=self.max_tokens)
         return out["choices"][0]["message"]["content"]
 
+    def complete_raw(self, prompt: str, seed: int, max_tokens: int = 16) -> str:
+        """Plain completion as in Maryam's scripts: llm(prompt, temperature, top_p, seed, stop=['\\n']);
+        max_tokens=16 is llama-cpp's __call__ default, which her scripts relied on."""
+        out = self.llm(prompt=prompt, temperature=self.temperature, top_p=self.top_p, seed=seed,
+                       stop=["\n"], max_tokens=max_tokens)
+        return out["choices"][0]["text"]
+
 
 def _article(word: str) -> str:
     return "an" if word[:1].lower() in "aeiou" else "a"
@@ -149,6 +156,11 @@ class LazyBackend:
             self._backend = self._factory()
         return self._backend.complete(instruction, user, seed)
 
+    def complete_raw(self, prompt: str, seed: int, max_tokens: int = 16) -> str:
+        if self._backend is None:
+            self._backend = self._factory()
+        return self._backend.complete_raw(prompt, seed, max_tokens)
+
 
 def build_prompt_generator(llm_cfg: dict, cache_path: Path, model_override: Optional[str] = None) -> PromptGenerator:
     from .config import resolve_weight
@@ -169,3 +181,57 @@ class TemplatePromptGenerator:
     def generate(self, category: str, keyword: str, seed: int, descriptor_text: Optional[str] = None,
                  fallback_text: Optional[str] = None) -> GeneratedPrompt:
         return GeneratedPrompt(fallback_prompt(category, descriptor_text or keyword), 0, False)
+
+
+LLAMA3_USER = "<|start_header_id|>user<|end_header_id|>\n\n{instruction}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n"
+
+
+def extract_paper_prompt(raw: str) -> str:
+    """Maryam's extraction: first line of the output that starts with 'a photo of' (case-insensitive), stripped."""
+    return next((l for l in raw.strip().splitlines() if l.lower().startswith("a photo of")), "").strip()
+
+
+class PaperPromptGenerator:
+    """dp-paper arm: the per-task instruction of Maryam's DP scripts (cfg.paper_dp.instruction, str.format with
+    category / descriptor / phrase / class paper_vars), Llama-3 chat header, one plain completion with seed n.
+    Her scripts skip the latent when the output has no 'A photo of' line; we retry with a shifted seed (max_retries)
+    and then fall back to the template, flagged -- so every latent stays paired with the other arms."""
+
+    def __init__(self, backend, instruction: str, cache_path: Optional[Path] = None, max_retries: int = 5):
+        self.backend, self.instruction, self.max_retries = backend, instruction, max_retries
+        self.cache_path = Path(cache_path) if cache_path else None
+        self._cache: Dict[str, GeneratedPrompt] = {}
+        if self.cache_path and self.cache_path.exists():
+            for line in self.cache_path.read_text().splitlines():
+                if line.strip():
+                    r = json.loads(line)
+                    self._cache[r["key"]] = GeneratedPrompt(r["prompt"], r["attempts"], r["fallback"])
+
+    def generate(self, variables: Dict[str, str], seed: int, fallback: str) -> GeneratedPrompt:
+        key = f"{variables.get('category')}|{variables.get('descriptor')}|{seed}"
+        if key in self._cache:
+            return self._cache[key]
+        text = LLAMA3_USER.format(instruction=self.instruction.format(**variables).strip())   # her f-strings had extra blank lines
+        result = None
+        for attempt in range(self.max_retries):
+            p = extract_paper_prompt(self.backend.complete_raw(text, seed + attempt * 1_000_003))
+            if p:
+                result = GeneratedPrompt(p, attempt + 1, False)
+                break
+        if result is None:
+            result = GeneratedPrompt(fallback, self.max_retries, True)
+        self._cache[key] = result
+        if self.cache_path:
+            self.cache_path.parent.mkdir(parents=True, exist_ok=True)
+            with self.cache_path.open("a") as f:
+                f.write(json.dumps(dict(key=key, seed=seed, prompt=result.prompt, attempts=result.attempts,
+                                        fallback=result.fallback, **variables)) + "\n")
+        return result
+
+
+def build_paper_generator(cfg, cache_path: Path, model_override: Optional[str] = None) -> PaperPromptGenerator:
+    from .config import resolve_weight
+    model = resolve_weight(model_override or cfg.llm["model"])
+    backend = LazyBackend(lambda: LlamaCppBackend(model, temperature=cfg.llm.get("temperature", 0.5),
+                                                  top_p=cfg.llm.get("top_p", 0.95)))
+    return PaperPromptGenerator(backend, cfg.paper_dp["instruction"], cache_path, cfg.llm.get("max_retries", 5))

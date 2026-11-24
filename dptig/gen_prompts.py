@@ -11,8 +11,8 @@ import argparse
 from pathlib import Path
 
 from .config import load_config
-from .llm_prompt import build_prompt_generator
-from .prompts import DiversePromptProvider
+from .llm_prompt import build_paper_generator, build_prompt_generator
+from .prompts import DiversePromptProvider, PaperPromptProvider
 
 
 def main(argv=None):
@@ -21,10 +21,14 @@ def main(argv=None):
     ap.add_argument("--num", type=int)
     ap.add_argument("--cache")
     ap.add_argument("--llm-model")
+    ap.add_argument("--method", choices=["dp", "dp-paper"], default="dp")
     a = ap.parse_args(argv)
     cfg = load_config(a.config)
-    pg = build_prompt_generator(cfg.llm, Path(a.cache or f"prompts/{cfg.name}_dp.jsonl"), a.llm_model)
-    prov = DiversePromptProvider(cfg, pg)
+    cache = Path(a.cache or f"prompts/{cfg.name}_{a.method}.jsonl")
+    if a.method == "dp-paper":
+        prov = PaperPromptProvider(cfg, build_paper_generator(cfg, cache, a.llm_model))
+    else:
+        prov = DiversePromptProvider(cfg, build_prompt_generator(cfg.llm, cache, a.llm_model))
     fb = 0
     for n in range(a.num or cfg.num_seeds):
         sp = prov.get(n)

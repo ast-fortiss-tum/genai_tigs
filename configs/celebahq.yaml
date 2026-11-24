@@ -1,10 +1,10 @@
-# CelebA-HQ (paper Sec. 3, 4.2, 5.2). REPLICATION: the authors' LoRA and classifier were not available, so both were
-# retrained here (dptig/celeba_lora_data.py + scripts/train_celeba_lora.sh, dptig/celeba_classifier.py).
-# Results are therefore not directly comparable with Table 2; FP vs DP stays a fair comparison (same weights).
+# CelebA-HQ (paper Sec. 3, 4.2, 5.2). Since 2026-11-24: Maryam's LoRA + her prompts (WORKLOG (16)/(17)). Classifier:
+# still our replication (hers, weights/classifiers/celeba_maryam/, agrees on our seeds; Andrea chose the LoRA only).
+# GA: ours (clamp, x2 on stall); hers had no clamp, x0.75 on stall and celeb_sd_params (not shared) bounds/deltas.
 name: celebahq
 sd:
   base_model: stable-diffusion-v1-5/stable-diffusion-v1-5
-  lora: lora/celebahq_lorav1.5-000005.safetensors   # epoch 5, as for the authors' LoRAs
+  lora: lora/celebahq_maryam-000002.safetensors   # Maryam's LoRA (2026-11-24); ours was lora/celebahq_lorav1.5-000005.safetensors
   size: 512
   steps: 25
   tgate: true
@@ -27,12 +27,51 @@ llm:
   top_p: 0.95
   max_words: 12
   max_retries: 5
+# dp-paper arm = Maryam's celebahq_sdllm_generator.py; instruction verbatim ({keyword} = her keywords_str /
+# keywords[0]; her Python list reprs inlined). The LLM picks the descriptor itself, so none is sampled.
+# Same LoRA as FP (her DP used the same celebsty LoRA, no style adapter).
+paper_dp:
+  sample_descriptor: false
+  instruction: |
+    You are a prompt generator for a text-to-image model.
+
+    Generate exactly one short, natural prompt that starts with:
+    A photo of ...
+
+    Rules:
+    - The prompt must be under 12 words.
+    - Use exactly one attribute phrase from: {keyword}.
+    - Include one simple color relevant to that attribute:
+      - For smiling-face: choose from ['soft smile', 'open-mouth smile']
+      - For curtain-bangs: choose from ['brown', 'blonde'].
+      - For eye-glasses: choose from ['black', 'brown', 'transparent'].
+    - Combine the descriptor and attribute naturally (do not mix types).
+    - The prompt format must be:
+        A photo of a person with [color or smile type] [attribute].
+    - Always include the attribute word (e.g., smiling-face, eye-glasses, curtain-bangs).
+    - Do not repeat words or add extra adjectives, objects, or background descriptions.
+    - Do not invent or modify keywords.
+    - Do not include any other words or explanations.
+    - Do not start with phrases like 'I'm ready', 'Here is', or anything similar.
+    - Do NOT invent synonyms or variants (no fringe, frames, reading, joyful, etc.).
+    - Do NOT use celebrity names.
+    - Do NOT use gender words (woman, man, girl, boy, male, female, lady, gentleman).
+    - Do NOT add punctuation beyond normal grammar, numbers, or explanations.
+    - If multiple keywords are provided, always use the FIRST.
+    - If unsure, output exactly: A photo of a person with color relevant to that attribute {keyword}.
 num_seeds: 100
 base_seed: 0
-# label = attribute index in the classifier output (official CelebA order, dptig/celeba_classifier.py ATTRS)
-# descriptors: TODO -- the paper only says "attribute-specific constraints"; pick with dptig/descriptors.py (BLIP)
-# on generated seeds once the LoRA exists, then confirm with the co-authors. DP/dp-template arms need them.
+# label = attribute index in the classifier output (official CelebA order, dptig/celeba_classifier.py ATTRS).
+# fixed_prompt = Maryam's LoRA training captions / her FP script. name = target category shown to the LLM (dp arm,
+# Fig. 3 instruction); it contains the trigger so DP prompts activate the LoRA concept.
+# descriptors = Maryam's DP lists (smile type / bangs colour / glasses colour), WORKLOG 2026-11-24 (16).
 classes:
-  - {label: 31, name: smiling face, fixed_prompt: "A photo of smiling-face", descriptors: []}
-  - {label: 5, name: face with curtain bangs, fixed_prompt: "A photo of curtain-bangs", descriptors: []}
-  - {label: 15, name: face with eyeglasses, fixed_prompt: "A photo of eye-glasses", descriptors: []}
+  - {label: 31, name: smiling-face person, fixed_prompt: "A photo of smiling-face person", paper_vars: {keyword: smiling-face},
+     descriptors: [soft smile, open-mouth smile],
+     template_phrases: {soft smile: "with a soft smile", open-mouth smile: "with an open-mouth smile"}}
+  - {label: 5, name: curtain-bangs person, fixed_prompt: "A photo of curtain-bangs person", paper_vars: {keyword: curtain-bangs},
+     descriptors: [brown, blonde],
+     template_phrases: {brown: "with brown curtain bangs", blonde: "with blonde curtain bangs"}}
+  - {label: 15, name: eye-glasses person, fixed_prompt: "A photo of eye-glasses person", paper_vars: {keyword: eye-glasses},
+     descriptors: [black, brown, transparent],
+     template_phrases: {black: "with black glasses", brown: "with brown glasses", transparent: "with transparent glasses"}}

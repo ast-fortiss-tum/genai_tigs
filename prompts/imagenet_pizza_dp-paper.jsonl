@@ -1,0 +1,100 @@
+{"key": "pizza|plate|0", "seed": 0, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|plate|1", "seed": 1, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|plate|2", "seed": 2, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|slice|3", "seed": 3, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|plate|4", "seed": 4, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|plate|5", "seed": 5, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|slice|6", "seed": 6, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|pepperoni|7", "seed": 7, "prompt": "A photo of a pizza with pepperoni topping", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "pepperoni", "phrase": "with pepperoni topping"}
+{"key": "pizza|slice|8", "seed": 8, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|plate|9", "seed": 9, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|plate|10", "seed": 10, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|pepperoni|11", "seed": 11, "prompt": "A photo of a pizza with pepperoni topping", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "pepperoni", "phrase": "with pepperoni topping"}
+{"key": "pizza|pepperoni|12", "seed": 12, "prompt": "A photo of a pizza with pepperoni topping", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "pepperoni", "phrase": "with pepperoni topping"}
+{"key": "pizza|slice|13", "seed": 13, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|plate|14", "seed": 14, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|plate|15", "seed": 15, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|slice|16", "seed": 16, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|slice|17", "seed": 17, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|plate|18", "seed": 18, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|pepperoni|19", "seed": 19, "prompt": "A photo of a pizza with pepperoni topping", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "pepperoni", "phrase": "with pepperoni topping"}
+{"key": "pizza|slice|20", "seed": 20, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|slice|21", "seed": 21, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|plate|22", "seed": 22, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|plate|23", "seed": 23, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|slice|24", "seed": 24, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|plate|25", "seed": 25, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|slice|26", "seed": 26, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|pepperoni|27", "seed": 27, "prompt": "A photo of a pizza with pepperoni topping", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "pepperoni", "phrase": "with pepperoni topping"}
+{"key": "pizza|plate|28", "seed": 28, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|plate|29", "seed": 29, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|plate|30", "seed": 30, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|slice|31", "seed": 31, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|plate|32", "seed": 32, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|slice|33", "seed": 33, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|slice|34", "seed": 34, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|slice|35", "seed": 35, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|pepperoni|36", "seed": 36, "prompt": "A photo of a pizza with pepperoni topping", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "pepperoni", "phrase": "with pepperoni topping"}
+{"key": "pizza|pepperoni|37", "seed": 37, "prompt": "A photo of a pizza with pepperoni topping", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "pepperoni", "phrase": "with pepperoni topping"}
+{"key": "pizza|plate|38", "seed": 38, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|slice|39", "seed": 39, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|pepperoni|40", "seed": 40, "prompt": "A photo of a pizza with pepperoni topping", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "pepperoni", "phrase": "with pepperoni topping"}
+{"key": "pizza|slice|41", "seed": 41, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|slice|42", "seed": 42, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|slice|43", "seed": 43, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|slice|44", "seed": 44, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|plate|45", "seed": 45, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|plate|46", "seed": 46, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|slice|47", "seed": 47, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|slice|48", "seed": 48, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|pepperoni|49", "seed": 49, "prompt": "A photo of a pizza with pepperoni topping", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "pepperoni", "phrase": "with pepperoni topping"}
+{"key": "pizza|plate|50", "seed": 50, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|pepperoni|51", "seed": 51, "prompt": "A photo of a pizza with pepperoni topping", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "pepperoni", "phrase": "with pepperoni topping"}
+{"key": "pizza|plate|52", "seed": 52, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|plate|53", "seed": 53, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|slice|54", "seed": 54, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|plate|55", "seed": 55, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|pepperoni|56", "seed": 56, "prompt": "A photo of a pizza with pepperoni topping", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "pepperoni", "phrase": "with pepperoni topping"}
+{"key": "pizza|pepperoni|57", "seed": 57, "prompt": "A photo of a pizza with pepperoni topping", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "pepperoni", "phrase": "with pepperoni topping"}
+{"key": "pizza|plate|58", "seed": 58, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|pepperoni|59", "seed": 59, "prompt": "A photo of a pizza with pepperoni topping", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "pepperoni", "phrase": "with pepperoni topping"}
+{"key": "pizza|pepperoni|60", "seed": 60, "prompt": "A photo of a pizza with pepperoni topping", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "pepperoni", "phrase": "with pepperoni topping"}
+{"key": "pizza|plate|61", "seed": 61, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|pepperoni|62", "seed": 62, "prompt": "A photo of a pizza with pepperoni topping", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "pepperoni", "phrase": "with pepperoni topping"}
+{"key": "pizza|slice|63", "seed": 63, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|plate|64", "seed": 64, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|plate|65", "seed": 65, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|plate|66", "seed": 66, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|pepperoni|67", "seed": 67, "prompt": "A photo of a pizza with pepperoni topping", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "pepperoni", "phrase": "with pepperoni topping"}
+{"key": "pizza|plate|68", "seed": 68, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|slice|69", "seed": 69, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|slice|70", "seed": 70, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|slice|71", "seed": 71, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|slice|72", "seed": 72, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|pepperoni|73", "seed": 73, "prompt": "A photo of a pizza with pepperoni topping", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "pepperoni", "phrase": "with pepperoni topping"}
+{"key": "pizza|plate|74", "seed": 74, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|pepperoni|75", "seed": 75, "prompt": "A photo of a pizza with pepperoni topping", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "pepperoni", "phrase": "with pepperoni topping"}
+{"key": "pizza|pepperoni|76", "seed": 76, "prompt": "A photo of a pizza with pepperoni topping", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "pepperoni", "phrase": "with pepperoni topping"}
+{"key": "pizza|plate|77", "seed": 77, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|plate|78", "seed": 78, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|plate|79", "seed": 79, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|pepperoni|80", "seed": 80, "prompt": "A photo of a pizza with pepperoni topping", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "pepperoni", "phrase": "with pepperoni topping"}
+{"key": "pizza|pepperoni|81", "seed": 81, "prompt": "A photo of a pizza with pepperoni topping", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "pepperoni", "phrase": "with pepperoni topping"}
+{"key": "pizza|pepperoni|82", "seed": 82, "prompt": "A photo of a pizza with pepperoni topping", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "pepperoni", "phrase": "with pepperoni topping"}
+{"key": "pizza|plate|83", "seed": 83, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|plate|84", "seed": 84, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|pepperoni|85", "seed": 85, "prompt": "A photo of a pizza with pepperoni topping", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "pepperoni", "phrase": "with pepperoni topping"}
+{"key": "pizza|pepperoni|86", "seed": 86, "prompt": "A photo of a pizza with pepperoni topping", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "pepperoni", "phrase": "with pepperoni topping"}
+{"key": "pizza|plate|87", "seed": 87, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|plate|88", "seed": 88, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|pepperoni|89", "seed": 89, "prompt": "A photo of a pizza with pepperoni topping", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "pepperoni", "phrase": "with pepperoni topping"}
+{"key": "pizza|plate|90", "seed": 90, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|plate|91", "seed": 91, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|plate|92", "seed": 92, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|slice|93", "seed": 93, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|pepperoni|94", "seed": 94, "prompt": "A photo of a pizza with pepperoni topping", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "pepperoni", "phrase": "with pepperoni topping"}
+{"key": "pizza|slice|95", "seed": 95, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|slice|96", "seed": 96, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|plate|97", "seed": 97, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}
+{"key": "pizza|slice|98", "seed": 98, "prompt": "A photo of a pizza as a slice of pizza", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "slice", "phrase": "as a slice of pizza"}
+{"key": "pizza|plate|99", "seed": 99, "prompt": "A photo of a pizza on a plate", "attempts": 1, "fallback": false, "category": "pizza", "descriptor": "plate", "phrase": "on a plate"}

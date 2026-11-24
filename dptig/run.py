@@ -7,7 +7,7 @@ from pathlib import Path
 from .classifiers import load_classifier
 from .config import load_config
 from .generator import SDGenerator, pick_device
-from .llm_prompt import build_prompt_generator
+from .llm_prompt import build_paper_generator, build_prompt_generator
 from .prompts import make_provider
 from .runner import run_task
 
@@ -15,7 +15,7 @@ from .runner import run_task
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", required=True)
-    ap.add_argument("--method", choices=["fp", "dp", "dp-template"], default="fp")
+    ap.add_argument("--method", choices=["fp", "dp", "dp-template", "dp-paper"], default="fp")
     ap.add_argument("--out", required=True)
     ap.add_argument("--num-seeds", type=int)
     ap.add_argument("--prompt-cache", help="DP-TIG prompt cache (default prompts/<task>_dp.jsonl)")
@@ -27,10 +27,12 @@ def main(argv=None):
     pg = None
     if a.method == "dp":
         pg = build_prompt_generator(cfg.llm, Path(a.prompt_cache or f"prompts/{cfg.name}_dp.jsonl"), a.llm_model)
+    if a.method == "dp-paper":
+        pg = build_paper_generator(cfg, Path(a.prompt_cache or f"prompts/{cfg.name}_dp-paper.jsonl"), a.llm_model)
     provider = make_provider(a.method, cfg, pg)
     device = pick_device()
     clf = load_classifier(cfg.classifier, device)
-    gen = SDGenerator(cfg.sd, device)
+    gen = SDGenerator(cfg.sd_for(a.method), device)
     run_task(cfg, provider, gen, clf, Path(a.out), a.levels, a.num_seeds)
 
 

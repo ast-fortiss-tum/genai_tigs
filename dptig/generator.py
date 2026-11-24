@@ -34,7 +34,12 @@ class SDGenerator:
         pipe = StableDiffusionPipeline.from_pretrained(
             sd_cfg["base_model"], torch_dtype=self.dtype, safety_checker=None,
             **({"variant": "fp16"} if self.dtype == torch.float16 else {})).to(device)
-        pipe.load_lora_weights(str(resolve_weight(sd_cfg["lora"])))
+        if sd_cfg.get("style_lora"):    # dp-paper: concept + style adapters merged as in Maryam's DP scripts
+            pipe.load_lora_weights(str(resolve_weight(sd_cfg["lora"])), adapter_name="concept")
+            pipe.load_lora_weights(str(resolve_weight(sd_cfg["style_lora"])), adapter_name="style")
+            pipe.set_adapters(["concept", "style"], adapter_weights=list(sd_cfg["adapter_weights"]))
+        else:
+            pipe.load_lora_weights(str(resolve_weight(sd_cfg["lora"])))
         pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
         self.use_tgate = bool(sd_cfg.get("tgate", True))
         if self.use_tgate:

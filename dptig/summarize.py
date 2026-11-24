@@ -18,7 +18,7 @@ PAPER = {
     ("imagenet_teddy", "fp"): (87, 98.85, 48.45, 100, 6.63), ("imagenet_teddy", "dp"): (92, 98.91, 40.79, 100, 4.88),
     ("celebahq", "fp"): (94, 24.73, 18.22, 91.47, 56.08), ("celebahq", "dp"): (93, 18.28, 8.82, 95.70, 45.26),
 }
-ARMS = ("fp", "dp", "dp-template")
+ARMS = ("fp", "dp", "dp-paper", "dp-template")
 
 
 def summarize_dir(d: Path) -> dict:

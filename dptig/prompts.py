@@ -60,7 +60,31 @@ class DiversePromptProvider:
         return PromptSpec(g.prompt, c.label, c.name, s, dict(llm_attempts=g.attempts, llm_fallback=g.fallback))
 
 
+class PaperPromptProvider:
+    """dp-paper: Maryam's DP prompts. Same class per latent as FP/DP (paired). The descriptor is sampled as in DP
+    unless paper_dp.sample_descriptor is false (CelebA: the LLM picks it from the lists in the instruction)."""
+    method = "dp-paper"
+
+    def __init__(self, cfg: TaskConfig, generator):
+        self.cfg, self.generator = cfg, generator
+
+    def get(self, n: int) -> PromptSpec:
+        c = self.cfg.sample_class(n)
+        s = None
+        if self.cfg.paper_dp.get("sample_descriptor", True):
+            s = random.Random(f"{self.cfg.base_seed}-desc-{n}").choice(c.descriptors)
+        pd = self.cfg.paper_dp.get("phrases", {})
+        phrase = (pd.get(s) or c.template_phrases.get(s) or c.descriptor_phrases.get(s) or s) if s else ""
+        v = {**dict(category=c.name, descriptor=s or "", phrase=phrase), **c.paper_vars}
+        g = self.generator.generate(v, seed=self.cfg.base_seed + n, fallback=f"{c.fixed_prompt} {phrase}".strip())
+        return PromptSpec(g.prompt, c.label, c.name, s, dict(llm_attempts=g.attempts, llm_fallback=g.fallback))
+
+
 def make_provider(method: str, cfg: TaskConfig, generator=None) -> PromptProvider:
+    if method == "dp-paper":
+        if generator is None:
+            raise ValueError("dp-paper needs a PaperPromptGenerator")
+        return PaperPromptProvider(cfg, generator)
     if method == "fp":
         return FixedPromptProvider(cfg)
     if method == "dp":

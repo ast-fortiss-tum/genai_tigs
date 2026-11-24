@@ -28,6 +28,7 @@ class ClassSpec:
     descriptors: List[str] = field(default_factory=list)   # DP-TIG conditioning descriptors (keywords)
     template_phrases: Dict[str, str] = field(default_factory=dict)    # keyword -> phrase for the LLM-free template arm
     descriptor_phrases: Dict[str, str] = field(default_factory=dict)  # optional keyword -> phrase shown to the LLM
+    paper_vars: Dict[str, str] = field(default_factory=dict)  # extra placeholders for the dp-paper instruction
 
 
 @dataclass
@@ -41,6 +42,15 @@ class TaskConfig:
     num_seeds: int = 100
     base_seed: int = 0
     llm: dict = field(default_factory=dict)
+    # dp-paper arm: Maryam's DP scripts (github.com/deeptestai/genai_tigs_diversity): instruction template,
+    # optional style LoRA + adapter weights, whether the descriptor is sampled (else the LLM picks it)
+    paper_dp: dict = field(default_factory=dict)
+
+    def sd_for(self, method: str) -> dict:
+        """SD settings for an arm: dp-paper adds the style LoRA (if configured) on top of the concept LoRA."""
+        if method != "dp-paper":
+            return self.sd
+        return {**self.sd, **{k: self.paper_dp[k] for k in ("style_lora", "adapter_weights") if k in self.paper_dp}}
 
     @property
     def bounds(self):

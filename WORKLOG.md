@@ -17,7 +17,7 @@ extension code/models are not available.
 | 2b | LLM-free `dp-template` ablation arm | done; skipped automatically where identical to DP (pizza) |
 | 3 | CelebA-HQ (classifier, LoRA, logit fitness) | **replicated** (authors' weights unavailable): classifier 91.3% on CelebA-HQ, LoRA seed validity 60/60; FP runs 15 seeds |
 | 4 | Diversity metrics (CLIP/ResNet-50), statistics, MTurk assets | metrics/stats/analysis done and run on real images; MTurk + label preservation todo (need human data) |
-| 5 | Full experiment (100 latents x {FP,DP} x {low,high} x 4 tasks) | **paused; Maryam's code received 2026-11-24 (entry 16), config decisions pending**: FP/DP at 30 seeds for CIFAR-10, pizza, teddy; CelebA FP at 20; `runs/main/` |
+| 5 | Full experiment (100 latents x {FP,DP} x {low,high} x 4 tasks) | **running `scripts/paper_queue.sh` since 2026-11-24 (entry 17)**; before: FP/DP at 30 seeds for CIFAR-10, pizza, teddy; CelebA FP at 20; `runs/main/` |
 
 ## QUESTIONS FOR THE 2026-11-18 MEETING (Andrea + V. Riccio)
 Evidence: entries (6)-(11) below and `python -m dptig.summarize runs/main`. Numbers are from our reimplementation
@@ -86,11 +86,53 @@ Progress: ~15% of Phase 5 (~120 of 800 FP/DP seed-runs = 100 latents x {FP,DP} x
 ## RESUME HERE (2026-11-18, GPU machine)
 State: `main` has local commits (not pushed). Env: conda env `dptig` (`~/miniforge3`); kohya env `kohya` for LoRA
 training. 51 tests pass (`python -m unittest discover -s tests`). Long runs: pin to E-cores (`taskset -c 16-31`).
-- **Runs stopped 2026-11-18 18:40, waiting for Maryam's code (entry (15)).** Resume with
+- **2026-11-24: `scripts/paper_queue.sh` running (entry 17); restart it the same way if it dies (it resumes).** Old queue:
   `PIN="taskset -c 16-31" ./scripts/overnight.sh`; progress in `runs/main/status.log`, analyses in
   `runs/main/analysis/`, summary table: `python -m dptig.summarize runs/main`.
 - Next after the meeting: act on the questions above (diversity definition, iteration-1 handling, prompt variety,
   CelebA LoRA rebalancing + descriptors), then continue Phase 5. MTurk assets remain (Phase 4).
+
+---
+
+## 2026-11-24 (17): Decisions applied -- dp-paper arm, CelebA on Maryam's LoRA, Table-3 metric; queue launched
+Andrea's decisions on entry (16): run **both** DP arms, switch CelebA to **her LoRA**, adopt her **cluster metric**.
+
+**Code**
+- New arm **`dp-paper`** (= Maryam's DP scripts): her per-task instruction verbatim (`paper_dp.instruction` in configs),
+  Llama-3 chat header, plain completion (temp 0.5, top-p 0.95, seed n, stop newline, max_tokens 16 = llama-cpp
+  default she relied on), first line starting "A photo of"; style LoRA merged with her adapter weights
+  (`paper_dp.style_lora/adapter_weights`; CIFAR-10 0.7/0.3, pizza 0.5/0.5, teddy 0.01/0.3). Same latents and class
+  (+ descriptor) per seed as fp/dp, so all arms are paired. **Deviations:** she skipped a latent when the LLM output had
+  no "A photo of" line; we retry with a shifted seed (max 5), then template fallback (flagged). Her class/style sequence
+  came from `random.choice`; ours from the shared per-latent choice (pairing). Her instruction whitespace is stripped.
+- `dptig.metrics.cluster_diversity` + `analyze --table3 --view {cifar10,imagenet,celeba} --kmeans-seeds N`: her
+  Table-3 score (CLIP L2 / ResNet-50 V2 raw, float32, KMeans K=2..12, paired t over K). `--view` embeds the classifier
+  input as she saved it (CIFAR 32x32 nearest; ImageNet 256->crop 224, her per-image min-max rescale not reproduced).
+  Only failure images are used (she also saved the best non-failure image; ~all searches fail, so negligible).
+- 56 tests pass (`tests/test_paper_setup.py` new). llama-cpp-python 0.3.2 built with CUDA in env `dptig` (first load
+  JIT-compiles CUDA kernels for minutes; later loads ~30 s, ~0.7 s per prompt).
+
+**Configs**
+- **Teddy FP trigger fixed:** `A photo of 1toy_bear teddy_bear` (LoRA training caption per safetensors metadata and the
+  authors' `INTB_sd_rq1.py`). Since Phase 0 we used `1teddy_toy teddy_bear` (typo in
+  `documentation/sd_ft_train_param_settings.md`). Old teddy FP archived to `runs/main/old_imagenet_teddy_fp_wrongtrigger`;
+  teddy RQ results in entries (11)-(15) are therefore against a weakened FP baseline. Teddy dp/dp-template unaffected.
+- **CelebA:** Maryam's LoRA, prompts "A photo of <attr> person"; descriptors for dp (smile type / bangs colour / glasses
+  colour). Kept: our classifier and GA (clamp, x2). Old CelebA FP archived to `runs/main/old_celebahq_fp_ourlora`.
+
+**Prompts** (`prompts/*_dp-paper.jsonl`, `prompts/celebahq_dp.jsonl`, 100 each): dp-paper 0 fallbacks; distinct texts
+CIFAR-10 56, pizza 3, teddy 3, CelebA 5. Her CIFAR-10 instruction ("include the exact phrase: {phrase} at the end")
+makes Llama write e.g. "A photo of a ship on road at the end." -- faithful to her setup, kept. CelebA dp: 2 fallbacks, 23 distinct.
+
+**Table-3 metric is unstable (important for the paper).** CIFAR-10 FP vs DP (30 seeds), same images, KMeans seeds
+0-9: p ranges 0.08-0.80 (CLIP low), 0.013-0.97 (ResNet low), 0.03-0.52 (ResNet high); direction flips (DP>FP in
+8/10 / 0/10 / 3/10 depending on condition); at most 1/10 seeds gives p<0.05. Even image order changes results (the
+entry (16) script, sorted filenames: ResNet high p=0.012; record order: p=0.134). Combined with n=6 non-independent K
+values, Table 3's significance claims are not robust. analyses now record all 10 seeds.
+
+**Queue** (`scripts/paper_queue.sh`, detached; log `runs/main/status.log`): rounds 15 then 30 seeds: teddy FP rerun,
+dp-paper for teddy/pizza/CIFAR-10, CelebA fp/dp/dp-paper; analyses after each run (Eq. 6 + Table-3, 10 KMeans seeds).
+Estimate from past s/seed: ~10 h for the non-CelebA part at 30, CelebA ~20 min/seed/arm -> ~30 h; total ~40 h.
 
 ---
 
