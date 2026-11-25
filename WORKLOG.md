@@ -86,13 +86,26 @@ Progress: ~15% of Phase 5 (~120 of 800 FP/DP seed-runs = 100 latents x {FP,DP} x
 ## RESUME HERE (2026-11-18, GPU machine)
 State: `main` has local commits (not pushed). Env: conda env `dptig` (`~/miniforge3`); kohya env `kohya` for LoRA
 training. 51 tests pass (`python -m unittest discover -s tests`). Long runs: pin to E-cores (`taskset -c 16-31`).
-- **2026-11-24: `scripts/paper_queue.sh` running (entry 17); restart it the same way if it dies (it resumes).** Old queue:
+- **2026-11-24: `scripts/paper_queue.sh` running (entry 17; restarted 2026-11-25 after a crash, entry 19); restart it the same way if it dies (it resumes).** Old queue:
   `PIN="taskset -c 16-31" ./scripts/overnight.sh`; progress in `runs/main/status.log`, analyses in
   `runs/main/analysis/`, summary table: `python -m dptig.summarize runs/main`.
 - Next after the meeting: act on the questions above (diversity definition, iteration-1 handling, prompt variety,
   CelebA LoRA rebalancing + descriptors), then continue Phase 5. MTurk assets remain (Phase 4).
 
 ---
+
+## 2026-11-25 (19): Machine went down overnight; paper queue resumed
+Hard shutdown at ~07:20 (no clean-shutdown record; last run log write 07:18, user journal ends 07:05). Cause unknown:
+power loss vs. the known CPU instability (queue was already pinned to E-cores 16-31); kernel log not readable without
+`adm`/`systemd-journal` group.
+
+State at the crash (15-seed round of `scripts/paper_queue.sh`): teddy FP rerun, teddy/pizza/CIFAR-10 dp-paper,
+CelebA fp and CelebA dp all 15/15 with analyses (non-CelebA) written; **CelebA dp-paper 6/15**. CelebA analyses run
+only after all three CelebA arms, so none yet.
+
+Restarted 10:20 with the same command (`setsid nohup ./scripts/paper_queue.sh >> runs/main/paper_queue.out 2>&1 &`):
+it re-ran the four finished analyses (identical inputs) and resumed CelebA dp-paper at seed 6 (10:22). Remaining:
+9 CelebA seeds (~3 h), then the 30-seed round (~30 h). Disk: 66 GB free (93% used).
 
 ## 2026-11-24 (18): RQ6 decision -- ResNet-50 is the reported metric
 Andrea: compute both CLIP and ResNet-50 (analyses keep doing so), but the paper will most likely report **ResNet-50
