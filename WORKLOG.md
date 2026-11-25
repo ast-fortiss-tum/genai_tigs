@@ -94,6 +94,33 @@ training. 51 tests pass (`python -m unittest discover -s tests`). Long runs: pin
 
 ---
 
+## 2026-11-25 (20): ImageNet teddy at 30 seeds with the corrected FP trigger -- FP vs DP, FP vs dp-paper
+Analyses `runs/main/analysis/imagenet_teddy_fp_vs_dp_n30_1439.json` and `..._fp_vs_dp-paper_n30_1606.json`. FP is the
+rerun with `1toy_bear` (entry (17)); these replace the teddy numbers in entries (11)-(15) and the RQ status table.
+Table-3 = Maryam's cluster score, 10 KMeans seeds; D shown for seed 0, "DP>FP" / "sig" = count over the 10 seeds.
+
+| | FP | DP (ours) | dp-paper |
+|---|---|---|---|
+| RQ1 valid seeds | 28/30 | **15/30** (Fisher p=0.0004) | 29/30 (p=1.0) |
+| RQ2 failures (low / high) | 28/28 / 28/28 | 15/15 / 15/15 | 29/29 / 29/29 |
+| RQ3 iterations vs FP (MW) | | low p=0.50 d=-0.23, high p=0.18 d=-0.53 | low p=0.29 d=-0.14, high p=0.14 d=-0.13 |
+| RQ6 ResNet low: D, DP>FP, sig | 0.70 / 0.81 | 0.92, 10/10, 5/10 | 0.80, 3/10, 0/10 |
+| RQ6 ResNet high | 0.74 / 0.87 | 0.90, 10/10, 2/10 | 0.88, 9/10, 0/10 |
+| RQ6 ResNet overall | 0.72 / 0.88 | 0.91, 9/10, 3/10 | 0.89, 8/10, 0/10 |
+
+(FP D differs per comparison: the cluster score depends on the paired arm's images, cf. entry (17).)
+CLIP (secondary): FP vs dp-paper leans FP-more-diverse (low 0.82 vs 0.73, DP>FP 1/10), significant in 1-3/10 seeds.
+
+- **RQ1 against the paper, now stronger:** with the correct FP trigger our DP keeps half its seeds (p=0.0004; was
+  p=0.013 vs the weakened FP). Paper: DP 92 vs FP 87.
+- **dp-paper behaves like FP:** no seed loss, same failures, slightly (n.s.) fewer iterations, no diversity gain.
+  Its teddy prompts have only 3 distinct texts and the style LoRA weight is 0.01, so little changes from FP.
+- Neither DP variant reproduces "as valid and more diverse": ours is more diverse (ResNet, paper direction, robust in
+  direction, significant in a minority of KMeans seeds) but loses seeds; Maryam's keeps seeds but adds no diversity.
+- 15-seed CelebA (preliminary, analyses `celebahq_fp_vs_dp*_n15_131*.json`): no significant difference on any RQ;
+  ResNet low DP>FP 10/10 KMeans seeds (sig 1/10) vs dp, 7/10 (sig 5/10, tiny gap 0.56 vs 0.58) vs dp-paper; low-level
+  arms have only 9-10 failure images.
+
 ## 2026-11-25 (19): Machine went down overnight; paper queue resumed
 Hard shutdown at ~07:20 (no clean-shutdown record; last run log write 07:18, user journal ends 07:05). Cause unknown:
 power loss vs. the known CPU instability (queue was already pinned to E-cores 16-31); kernel log not readable without
