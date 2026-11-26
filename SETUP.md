@@ -2,7 +2,7 @@
 
 Verified on macOS (Apple Silicon, MPS) and on Linux + RTX 4090 (CUDA, env build and base SD only, 2026-11-17); the code picks the device
 automatically (`pick_device` in `dptig/generator.py`) and uses fp16 on CUDA, fp32 elsewhere.
-**Do not run experiments on the dev Mac**: a GA generation took 50-150 s per denoising step (see WORKLOG.md, entry 3).
+**Do not run experiments on the dev Mac**: a GA generation took 50-150 s per denoising step (see docs/worklog_history.md, entry 2026-11-13 (3)).
 
 ## 1. Environment
 ```
@@ -43,8 +43,8 @@ python -m dptig.run --config configs/cifar10.yaml --method dp-template --out run
 - Runs resume from `--out`. Output includes seed images, and rejected seeds (needed for RQ1).
 - `--num-seeds` defaults to the config's 100. Start with 5 and compare to Table 2 of the paper.
 - First thing to settle on the new machine: `search.delta_scale` (1.0 paper vs 2.0 legacy) and `fitness`
-  (`logit_margin` legacy vs `softmax_margin` paper); see WORKLOG.md entry 1.
-- Time one seed first and record it in WORKLOG.md (expected: minutes per seed on a modern GPU; unmeasured).
+  (`logit_margin` legacy vs `softmax_margin` paper); see docs/worklog_history.md.
+- Time one seed first and record it in WORKLOG.md (log section) (expected: minutes per seed on a modern GPU; unmeasured).
 
 ## 5. Analysis (Phase 4)
 ```
