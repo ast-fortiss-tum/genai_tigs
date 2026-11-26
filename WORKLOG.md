@@ -639,8 +639,19 @@ Unverified so far: anything running Stable Diffusion end-to-end on GPU; real Lla
 - Tests: 33 pass in conda env `dptig` (base python has no torch/diffusers).
 
 ## Open questions / next
-- Run FP-TIG on the other machine (CIFAR-10 first, `--num-seeds 5`), then compare with Table 2 and settle items 1-2 above.
-- Ask Maryam: CelebA-HQ classifier and LoRA weights, and anything else from the original DP-TIG runs.
+- ~~Run FP-TIG on the other machine~~ done (GPU machine, entries from 2026-11-17).
+- ~~Ask Maryam for her code/weights~~ received 2026-11-24 (entry (16)).
+- **Proposed extension (2026-11-26, after the 100-seed queue): does FP vs DP hold with a modern generator?**
+  Not a replacement for SD 1.5: the replication must stay on SD 1.5 + the paper's LoRAs to be comparable with
+  Tables 2-3. Hardware check (RTX 4090 24 GB, 31 GB RAM): SD 3.5 Medium (2.5 B) fits as is; SD 3.5 Large (8 B) and
+  Flux.1 (12 B) need fp8/NF4 weights and T5 offload; weights ~20-35 GB disk. Estimated (not measured) cost at 512x512
+  vs SD 1.5's ~0.2 s/image: SD3.5-M / Flux-schnell 3-5x, SD3.5-L ~10x, Flux-dev 15-20x; one seed = ~5,000 images,
+  so CelebA would go from ~20 min to hours per seed. Needed: (a) no concept LoRAs (modern models draw teddy/pizza
+  without them; SD 1.5 LoRAs do not transfer), FP = plain fixed prompt, DP = same prompts + descriptors; (b) GA
+  recalibration: 16-channel flow-matching latents, Flux-dev has no CFG, so delta bounds/divisors and seed/mutation
+  guidance from entry (6) do not carry over; TGate does not support SD3/Flux (to be confirmed). Plan: SD 3.5 Medium
+  (Flux-schnell as second), teddy + pizza, 30 seeds, short calibration grid first; ~2-4 days incl. setup. Licences:
+  both gated on Hugging Face; Flux-dev non-commercial (fine for research).
 - ~~Measure the Llama fallback rate~~ done 2026-11-15 (0/300).
 - Phase 4: metrics/stats/CLI done; MTurk assets and analysis remain.
 
