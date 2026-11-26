@@ -17,7 +17,7 @@ extension code/models are not available.
 | 2b | LLM-free `dp-template` ablation arm | done; skipped automatically where identical to DP (pizza) |
 | 3 | CelebA-HQ (classifier, LoRA, logit fitness) | **replicated** (authors' weights unavailable): classifier 91.3% on CelebA-HQ, LoRA seed validity 60/60; FP runs 15 seeds |
 | 4 | Diversity metrics (CLIP/ResNet-50), statistics, MTurk assets | metrics/stats/analysis done and run on real images; MTurk + label preservation todo (need human data) |
-| 5 | Full experiment (100 latents x {FP,DP} x {low,high} x 4 tasks) | **running `scripts/paper_queue.sh` since 2026-11-24 (entry 17)**; before: FP/DP at 30 seeds for CIFAR-10, pizza, teddy; CelebA FP at 20; `runs/main/` |
+| 5 | Full experiment (100 latents x {FP,DP} x {low,high} x 4 tasks) | 30 seeds x 3 arms x 4 tasks done 2026-11-26 (entries (17)-(22)); **`scripts/queue_100.sh` extending to 100** (entry (22)); `runs/main/` |
 
 ## QUESTIONS FOR THE 2026-11-18 MEETING (Andrea + V. Riccio)
 Evidence: entries (6)-(11) below and `python -m dptig.summarize runs/main`. Numbers are from our reimplementation
@@ -63,39 +63,59 @@ Evidence: entries (6)-(11) below and `python -m dptig.summarize runs/main`. Numb
 
 **Not answerable by us:** MTurk validity / label preservation (RQ4-5) need a new human study.
 
-## REPRODUCTION STATUS BY RQ (2026-11-25 22:15; 30 seeds for CIFAR-10 / pizza / teddy, all three arms)
+## REPRODUCTION STATUS BY RQ (2026-11-26 12:30; 30 seeds for all 4 tasks x 3 arms = 30% of the paper's 100)
 Arms: FP, DP (ours), dp-paper (Maryam's DP setup, entry (17)); all paired on the same 30 latents. Teddy FP = rerun with
-the corrected trigger (entry (17)). CelebA: 15 seeds per arm (entry (20)), 30 running. Settings: delta_scale 2.0,
+the corrected trigger (entry (17)). CelebA (Maryam's LoRA, our classifier/GA): 30 seeds per arm, entry (22). `scripts/queue_100.sh` extends all to 100. Settings: delta_scale 2.0,
 logit_margin (entry (6)). Analyses: newest `runs/main/analysis/<task>_fp_vs_<arm>_n30_*.json`; entries (20)-(21).
 RQ6 = Table-3 cluster score (Maryam's metric), ResNet-50 primary (entry (18)), CLIP secondary; "DP>FP a/10, sig b/10"
 counts over 10 KMeans seeds (the score is unstable across seeds, entry (17)).
 
 | RQ | Paper's claim | Status | Result at 30 seeds (FP / DP / dp-paper) |
 |---|---|---|---|
-| **RQ1** Seed generation (% valid seeds) | DP as good or better | Done, 3 tasks | CIFAR-10 93 / 83 / 83% (p=0.42 both; paper DP 84 vs FP 87). Pizza 77 / 60 / 83% (p=0.27 / 0.75; paper 85 vs 73). **Teddy 93 / 50 / 97%: DP p=0.0004, significant, against the paper** (92 vs 87); dp-paper p=1.0. Our DP loses seeds on all 3 tasks (rejected teddy seeds are mostly fine bears labelled as the furniture from the descriptor or as dog breeds, `runs/main/invalid_seeds/`); dp-paper does not |
-| **RQ2** Effectiveness (% failures found) | DP matches or beats FP | Done, 3 tasks | **Agrees**: ~100% of valid seeds in every arm, task and level. FP matches Table 2 |
-| **RQ3** Efficiency (iterations to first failure, low level mean) | DP generally fewer | Done, 3 tasks | CIFAR-10 77.9 / 68.5 / 65.2 (p=0.50 / 0.53; paper DP 74.7 vs FP 85.6, same direction, n.s.). Pizza 66.1 / 56.9 / **121.1** (p=0.83 / **0.009, d=0.80**; paper DP 123 vs FP 84: **dp-paper reproduces it**, ours does not). Teddy 56.3 / 45.2 / 48.6 (p=0.50 / 0.29; paper DP faster, same direction, n.s.). High level: same directions, only pizza dp-paper near significance (p=0.05) |
+| **RQ1** Seed generation (% valid seeds) | DP as good or better | Done, 4 tasks | CelebA 100 / 100 / 100% (no difference). CIFAR-10 93 / 83 / 83% (p=0.42 both; paper DP 84 vs FP 87). Pizza 77 / 60 / 83% (p=0.27 / 0.75; paper 85 vs 73). **Teddy 93 / 50 / 97%: DP p=0.0004, significant, against the paper** (92 vs 87); dp-paper p=1.0. Our DP loses seeds on all 3 tasks (rejected teddy seeds are mostly fine bears labelled as the furniture from the descriptor or as dog breeds, `runs/main/invalid_seeds/`); dp-paper does not |
+| **RQ2** Effectiveness (% failures found) | DP matches or beats FP | Done, 4 tasks | **Agrees**: ~100% of valid seeds in every arm, task and level, except CelebA low (FP 17/30, DP 20/30, dp-paper 20/30; p=0.60). FP matches Table 2 |
+| **RQ3** Efficiency (iterations to first failure, low level mean) | DP generally fewer | Done, 4 tasks | CelebA 125.6 / 127.2 / 140.8 (p=0.94 / 0.60; high 34.8 / 32.6 / 29.9, n.s.). CIFAR-10 77.9 / 68.5 / 65.2 (p=0.50 / 0.53; paper DP 74.7 vs FP 85.6, same direction, n.s.). Pizza 66.1 / 56.9 / **121.1** (p=0.83 / **0.009, d=0.80**; paper DP 123 vs FP 84: **dp-paper reproduces it**, ours does not). Teddy 56.3 / 45.2 / 48.6 (p=0.50 / 0.29; paper DP faster, same direction, n.s.). High level: same directions, only pizza dp-paper near significance (p=0.05) |
 | **RQ4** Validity (human, MTurk) | DP more valid inputs | **Not started** | Needs a new MTurk study |
 | **RQ5** Label preservation (human) | Mixed | **Not started** | Same MTurk study |
-| **RQ6** Image diversity (Table-3, ResNet-50) | DP more diverse | Done, 3 tasks | **Teddy DP: more diverse** (overall 0.72 -> 0.91, DP>FP 9/10, sig 3/10; low sig 5/10). Everything else n.s. and direction unstable: CIFAR-10 DP high 0.93 -> 0.82 (DP>FP 0/10, sig 1/10), dp-paper 3/10; pizza DP overall 7/10 (sig 1/10), dp-paper high 1/10; teddy dp-paper ~equal (0.88 vs 0.88). CLIP: only pizza dp-paper low is robust (0.50 -> 0.75, sig 10/10) |
+| **RQ6** Image diversity (Table-3, ResNet-50) | DP more diverse | Done, 4 tasks | **Teddy DP: more diverse** (overall 0.72 -> 0.91, DP>FP 9/10, sig 3/10; low sig 5/10). Everything else n.s. and direction unstable: CIFAR-10 DP high 0.93 -> 0.82 (DP>FP 0/10, sig 1/10), dp-paper 3/10; pizza DP overall 7/10 (sig 1/10), dp-paper high 1/10; teddy dp-paper ~equal (0.88 vs 0.88). CelebA: DP low slightly higher (0.83 -> 0.85, DP>FP 10/10, sig 5/10), dp-paper consistently *lower* (low 0.83 -> 0.73, DP>FP 0/10, sig 1/10). CLIP: only pizza dp-paper low is robust (0.50 -> 0.75, sig 10/10) |
 
 - **Solid:** the FP baseline (reproduces Table 2's FP rows on CIFAR-10, pizza, teddy); RQ2.
 - **Against the paper:** RQ1 for our DP (teddy significant); RQ6 not robust (only teddy-ours and pizza-dp-paper-CLIP).
 - **Two DP setups, two trade-offs:** ours varies the scene more (more diverse on teddy) but the classifier rejects
   more seeds; Maryam's keeps seeds and behaves like FP (3 distinct prompts each on teddy and pizza), except that it
   reproduces the paper's slower search on pizza.
-- **Missing:** CelebA at 30 seeds (queue, ~2026-11-26 13:00), the human study (RQ4/RQ5).
+- **CelebA** shows no FP-vs-DP difference on RQ1-RQ3; RQ6 mixed (ours slightly more diverse at low, dp-paper less).
+- **Missing:** 100 seeds (`scripts/queue_100.sh`, ~4-5 GPU-days from 2026-11-26), the human study (RQ4/RQ5).
 
 ## RESUME HERE (2026-11-18, GPU machine)
 State: `main` has local commits (not pushed). Env: conda env `dptig` (`~/miniforge3`); kohya env `kohya` for LoRA
 training. 51 tests pass (`python -m unittest discover -s tests`). Long runs: pin to E-cores (`taskset -c 16-31`).
-- **2026-11-24: `scripts/paper_queue.sh` running (entry 17; restarted 2026-11-25 after a crash, entry 19); restart it the same way if it dies (it resumes).** Old queue:
+- **2026-11-26: `scripts/queue_100.sh` running (entry 22; `setsid nohup ./scripts/queue_100.sh >> runs/main/queue_100.out 2>&1 < /dev/null &`); restart it the same way if it dies (it resumes).** `scripts/paper_queue.sh` finished 2026-11-26 12:07. Old queue:
   `PIN="taskset -c 16-31" ./scripts/overnight.sh`; progress in `runs/main/status.log`, analyses in
   `runs/main/analysis/`, summary table: `python -m dptig.summarize runs/main`.
 - Next after the meeting: act on the questions above (diversity definition, iteration-1 handling, prompt variety,
   CelebA LoRA rebalancing + descriptors), then continue Phase 5. MTurk assets remain (Phase 4).
 
 ---
+
+## 2026-11-26 (22): CelebA at 30 seeds; PAPER QUEUE DONE; extension to the paper's 100 seeds
+`scripts/paper_queue.sh` finished 12:07 ("PAPER QUEUE DONE"): all 4 tasks x {FP, DP, dp-paper} at 30 seeds.
+CelebA analyses `celebahq_fp_vs_dp_n30_1206.json`, `celebahq_fp_vs_dp-paper_n30_1207.json` (Maryam's LoRA, our
+classifier and GA):
+- RQ1: 30/30 valid in every arm. RQ2: high 30/30 everywhere; low FP 17, DP 20, dp-paper 20 of 30 (p=0.60).
+- RQ3 low mean (median): FP 125.6 (107), DP 127.2 (131), dp-paper 140.8 (146); MW p=0.94 / 0.60. High 34.8 / 32.6 /
+  29.9, n.s. A third of low-level searches hit the 250-iteration cap without a failure.
+- RQ6 Table-3 ResNet: DP low 0.83 -> 0.85 (DP>FP 10/10, sig 5/10), overall 9/10 (sig 2/10); dp-paper lower at all
+  levels (low 0.83 -> 0.73, DP>FP 0/10; overall 0/10). CLIP: no robust effect.
+- **No FP-vs-DP difference on CelebA** for RQ1-RQ3; RQ6 small and arm-dependent.
+
+**100 seeds.** The paper used 100 latents per task (Sec. 5, "For each task, we generated 100 initial latent vectors";
+Maryam's generators: `imgs_to_samp = 100`; Table 2's percentages, e.g. CIFAR-10 DP 92.86% = 78/84 valid). Ours: 30.
+`scripts/queue_100.sh` appends seeds 30-99 to all 12 runs (resume from records.jsonl; seed n -> latent base_seed+n,
+prompt n from the 100-entry `prompts/*.jsonl`, so arms stay paired), rounds 50 then 100, CIFAR-10 / pizza / teddy
+first, CelebA last; analyses after each task per round. ~4-5 GPU-days. FP/DP code paths unchanged since the
+2026-11-17 runs (`9759dd6` only added dp-paper; teddy invalid seeds regenerated bit-identically on 2026-11-25).
+**Configs and generation code must not change while it runs.**
 
 ## 2026-11-25 (21): pizza / CIFAR-10 dp-paper at 30 seeds; Table-3 added for CIFAR-10 / pizza FP vs DP
 `imagenet_pizza_fp_vs_dp-paper_n30_1908.json`, `cifar10_fp_vs_dp-paper_n30_2208.json`, and (run by hand, the queue
