@@ -252,3 +252,18 @@ CLIP, per-arm: the only case where DP is consistently higher is CIFAR-10 (DP 10/
 - **2026-11-27 (23b)** RQ4/RQ5 reanalysed from the raw MTurk answers (issue 9): CelebA high matches Table 2
   exactly; CelebA low and pizza DP do not (pizza label preservation 61.5 / 52.1% vs the paper's 85.3%); the raw
   answers for CIFAR-10, teddy and pizza FP are not in Maryam's repo.
+- **2026-11-28 (24) Phase 0 done** (CelebA at 50 + pre-registered RQ6 test on all 50-seed data;
+  [docs/auto_results.md](docs/auto_results.md)).
+  - **CelebA at 50:** RQ1-RQ3 no difference in either arm (validity 98% everywhere; low-level effectiveness 71 / 71 /
+    69%; iterations p >= 0.49). Per-arm Table-3 clustering: FP >= both DP arms, 0/10 significant.
+  - **Pre-registered RQ6 test (Eq. 6, permutation, Holm over 8 task x level tests per arm):**
+    - **Our DP: 0/16 significant** (ResNet primary and CLIP). All 8 ResNet differences are positive but small
+      (+0.002 to +0.041) with CIs including 0. The clean DP arm is not measurably more diverse than FP on any task.
+    - **dp-paper:** larger on ImageNet only (ResNet pizza +0.15 / +0.13, teddy +0.05 / +0.06; raw p 0.007-0.018),
+      but **no primary (ResNet) test survives Holm** (smallest 0.054). Secondary CLIP: pizza low survives (Holm
+      0.0096). Nothing on CIFAR-10 or CelebA, the two tasks where dp-paper's style LoRA is weak (CIFAR-10 0.3) or absent
+      (CelebA).
+    - Eq. 6 (pairwise spread) and per-arm Table-3 (cluster coverage) disagree on pizza dp-paper: more spread but
+      fewer evenly filled clusters. Consistent with a style LoRA that adds a distinct look rather than variety.
+  - Phase A next (dp-paper-nostyle, CIFAR-10 39/50 at 00:47) decides whether the ImageNet dp-paper effect is the
+    prompts or the style LoRA.
