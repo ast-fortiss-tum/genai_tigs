@@ -1,4 +1,4 @@
-# DP-TIG reimplementation: current state (2026-11-26)
+# DP-TIG reimplementation: current state (2026-11-27)
 
 Reimplementation of the paper's extension ("Prompt Diversity for Diffusion-Based Test Input Generation"): DP-TIG
 (LLM target-descriptor prompts) vs FP-TIG (fixed prompt), same SD 1.5 + GA search, on CIFAR-10, ImageNet pizza,
@@ -10,7 +10,8 @@ entry at the end of this file and update the sections above it.
 
 ## 1. Where we are
 
-- **Done:** all 4 tasks x 3 arms (FP, our DP, Maryam's DP) at **30 seeds**, analysed (section 3).
+- **Done:** all 4 tasks x 3 arms (FP, our DP, Maryam's DP) at **30 seeds**, analysed (section 3); CIFAR-10, pizza and
+  teddy at **50 seeds**, analysed (section 3b).
 - **Running:** extension to the paper's **100 seeds** (`scripts/queue_100.sh`, started 2026-11-26 12:22, ~4-5
   GPU-days; seeds 30-99 are appended, 0-29 untouched; rounds of 50 then 100; CIFAR-10 / pizza / teddy first,
   CelebA last). The paper used 100 latents per task (Sec. 5; Maryam's scripts `imgs_to_samp = 100`).
@@ -99,6 +100,60 @@ CLIP: the only robust effect is pizza dp-paper, low level (0.50 -> 0.75, signifi
   unknown `celeb_sd_params`); not resolvable without that file.
 - No significant result at 30 seeds is in the paper's favour except pizza RQ3 with dp-paper.
 
+## 3b. Results at 50 seeds (CIFAR-10, pizza, teddy; CelebA still running)
+
+Same layout as section 3 (FP / DP / dp-paper; p: FP vs DP, FP vs dp-paper). Files:
+`runs/main/analysis/<task>_fp_vs_<arm>_n50_*.json`, per-arm clustering `runs/main/analysis/<task>_t3_separate_n50.json`.
+
+**RQ1 seed validity (%)**
+| Task | Ours FP / DP / dp-paper | p |
+|---|---|---|
+| CIFAR-10 | 94 / 86 / 90 | 0.32 / 0.72 |
+| Pizza | 78 / 58 / 86 | 0.053 / 0.44 |
+| Teddy | 90 / **54** / 94 | **0.0001** / 0.72 |
+
+**RQ2 effectiveness, low level (%)** (high level: 100% everywhere)
+| Task | Ours FP / DP / dp-paper | p |
+|---|---|---|
+| CIFAR-10 | 91 / 88 / 87 | 0.73 / 0.52 |
+| Pizza | 97 / 100 / 95 | 1 / 1 |
+| Teddy | 100 / 100 / 100 | 1 / 1 |
+
+**RQ3 iterations to first failure, low level**
+| Task | Ours FP / DP / dp-paper | p (d) |
+|---|---|---|
+| CIFAR-10 | 72 / 63 / 60 | 0.36 / 0.25 |
+| Pizza | 74 / 73 / **121** | 0.89 / **0.006 (d=0.70)** |
+| Teddy | 54 / 34 / 38 | 0.09 (d=-0.45) / 0.055 (d=-0.33) |
+
+High level: teddy DP and dp-paper are significantly *faster* than FP (p=0.047, d=-0.58; p=0.017, d=-0.29), the
+opposite of the paper's direction; pizza dp-paper slower (p=0.07).
+
+**RQ6 diversity, Table-3 metric, ResNet-50, overall.** Mean D over 10 KMeans seeds (FP -> arm), "arm > FP in a/10
+seeds, significant (in either direction) in b/10". *Joint* = authors' procedure (KMeans on FP + arm pooled);
+*per-arm* = each arm clustered on its own (`scripts/t3_separate.py`).
+| Task / arm | Joint | Per-arm |
+|---|---|---|
+| CIFAR-10 DP | 0.95 -> 0.95, 3/10, 1/10 | 0.95 -> 0.95, 6/10, 0/10 |
+| CIFAR-10 dp-paper | 0.96 -> 0.96, 6/10, 2/10 | 0.95 -> 0.95, 4/10, 0/10 |
+| Pizza DP | 0.87 -> 0.84, 2/10, 1/10 | 0.85 -> 0.79, 0/10, 2/10 |
+| Pizza dp-paper | **0.47 -> 0.71, 10/10, 10/10** | 0.85 -> 0.73, **0/10**, 1/10 |
+| Teddy DP | 0.80 -> 0.87, 9/10, 2/10 | 0.86 -> 0.80, **0/10**, 0/10 |
+| Teddy dp-paper | 0.86 -> 0.85, 3/10, 1/10 | 0.86 -> 0.88, 7/10, 2/10 |
+
+CLIP, per-arm: the only case where DP is consistently higher is CIFAR-10 (DP 10/10, sig 1/10; dp-paper 10/10, sig
+5/10, 0.94 -> 0.97). Pizza dp-paper joint CLIP (FP 0.71 -> 0.85, sig 8/10) also drops to 0.92 -> 0.86 per-arm.
+
+**What this says**
+- RQ1-RQ3 at 50 seeds confirm the 30-seed picture: our DP loses seeds (teddy, nearly pizza), dp-paper does not; RQ2
+  ~100% in all arms; the only paper-direction RQ3 effect is pizza dp-paper (121 vs 74, paper 123 vs 84), now
+  stronger; teddy goes the other way.
+- **The one strong diversity result (pizza dp-paper, 10/10 significant) is an artefact of the joint clustering.** The
+  same FP images score 0.87 when clustered with DP and 0.47 when clustered with dp-paper. dp-paper's style LoRA
+  gives its images a distinct look, so the pooled KMeans partly separates the arms and FP lands in few clusters.
+  Clustered separately, dp-paper is *less* diverse than FP (0.73 vs 0.85). Teddy DP's joint advantage also
+  reverses per-arm. See issue 8.
+
 ## 4. Issues for the paper (co-authors)
 
 1. **Table-3 diversity test is not robust.** Same images, different KMeans seed: p from 0.01 to 0.97 and the
@@ -125,10 +180,17 @@ CLIP: the only robust effect is pizza dp-paper, low level (0.50 -> 0.75, signifi
 7. **Doc typo:** `documentation/sd_ft_train_param_settings.md` gives the teddy trigger as `1teddy_toy`; the LoRA was
    trained with `1toy_bear`. We used the wrong one until 2026-11-24 (old FP archived, all reported results use the
    correct one).
+8. **Table-3 joint clustering measures how different the arms look, not only diversity.** KMeans is fit on FP and
+   DP images pooled (Maryam's `compute_diversity_*.py`), so each arm's score depends on the other arm: if DP images
+   differ systematically (style LoRA, descriptors such as furniture), clusters split by arm and FP's score drops.
+   At 50 seeds this alone produces pizza dp-paper 0.47 -> 0.71 (10/10 significant); with per-arm clustering the
+   effect is gone (0.85 -> 0.73). Recommendation: cluster each arm separately (or on a fixed reference set) and
+   report that. Section 3b.
 
 ## 5. Next
 
-1. **100 seeds** (running). Expected: CIFAR-10 / pizza / teddy at 50 ~2026-11-27, all at 100 ~2026-12-01.
+1. **100 seeds** (running). 50 seeds done for CIFAR-10 / pizza / teddy (2026-11-27 08:50); CelebA at 50 expected
+   ~2026-11-28; all at 100 ~2026-12-01. Rerun `scripts/t3_separate.py` at 100 seeds next to the joint analysis.
 2. **RQ4 / RQ5 (human study):** Maryam's repo contains the original MTurk batches and answers
    (`evaluation_results/mturk-evaluation/`), so these RQs can be reanalysed from existing data instead of a new study.
    Not done yet.
@@ -155,3 +217,6 @@ CLIP: the only robust effect is pizza dp-paper, low level (0.50 -> 0.75, signifi
 
 - **2026-11-26** WORKLOG condensed to the current state for review; full history moved to
   `docs/worklog_history.md` (entries (1)-(22)). `scripts/queue_100.sh` running.
+- **2026-11-27** 50-seed results for CIFAR-10, pizza and teddy (section 3b). Per-arm Table-3 clustering
+  (`scripts/t3_separate.py`, CPU) shows the pizza dp-paper diversity effect is an artefact of the joint clustering
+  (issue 8). CelebA at 50 running.
