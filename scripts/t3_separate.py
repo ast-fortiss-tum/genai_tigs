@@ -9,8 +9,10 @@ from dptig import stats
 from dptig.metrics import ClipExtractor, ResNetExtractor, cluster_diversity, load_images, paper_view
 
 task, view, N, out = sys.argv[1], sys.argv[2], int(sys.argv[3]), sys.argv[4]
-arms, levels, seeds = ["fp", "dp", "dp-paper"], ("low", "high"), range(10)
+levels, seeds = ("low", "high"), range(10)
 M = Path("runs/main")
+_n = lambda a: len((M / f"{task}_{a}" / "records.jsonl").read_text().splitlines()) if (M / f"{task}_{a}" / "records.jsonl").exists() else 0
+arms = ["fp"] + [a for a in ("dp", "dp-paper", "dp-paper-nostyle") if _n(a) >= N]   # only arms with all N paired seeds
 files = {}
 for a in arms:
     d = M / f"{task}_{a}"
@@ -31,7 +33,7 @@ for name, ext, l2 in (("clip", ClipExtractor("cpu"), True), ("resnet50", ResNetE
             for c in D[a]:
                 D[a][c].append(d[c])
     r = {}
-    for arm in ("dp", "dp-paper"):
+    for arm in arms[1:]:
         for c in list(levels) + ["overall"]:
             rows = []
             for i in seeds:

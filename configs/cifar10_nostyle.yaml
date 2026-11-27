@@ -1,0 +1,61 @@
+# dp-paper-nostyle arm: identical to configs/cifar10.yaml but WITHOUT the style LoRA / adapter weights, so Maryam's
+# dp-paper prompts run on FP's weights (concept LoRA at 1.0). Run with --method dp-paper (same prompt cache). WORKLOG (23).
+name: cifar10
+sd:
+  base_model: stable-diffusion-v1-5/stable-diffusion-v1-5
+  lora: lora/cifar10_finetune_lorav1.5-000005.safetensors
+  size: 512
+  steps: 25
+  tgate: true            # TGate + DeepCache, as in the legacy scripts; set false to use the plain pipeline
+  gate_step: 10
+  cache_interval: 3
+  seed_guidance: 3.5     # paper Sec. 4.1.1
+  mutation_guidance: 1.4
+classifier: {kind: cifar10_vgg, weights: classifiers/cifar10/CIFAR10_cifar10_train.pynet.pth}
+fitness: logit_margin   # legacy: raw logits. paper Eq.3 says softmax -> softmax_margin
+search:
+  pop_size: 25
+  best_left: 10          # tshdBest
+  max_iter: 250
+  bounds: [-5.53951740264893, 5.377610206604]   # latent min/max from evaluation_results/mutation_extent_ranges (legacy values)
+  delta_divisor: {low: 10000, high: 1000}   # delta = (max-min)/divisor  (paper Sec. 5.5)
+  delta_scale: 2.0       # Phase 1 grid (WORKLOG 2026-11-17 (6)): legacy 2x matches Table 2; paper Alg.1 says 1.0
+llm:                     # DP-TIG prompt generation (paper Sec. 5.4.1)
+  model: llm/Llama-3-8B-Instruct-32k-v0.1.Q4_K_M.gguf   # under weights/
+  temperature: 0.5
+  top_p: 0.95
+  max_words: 12
+  max_retries: 5
+# dp-paper arm = Maryam's DP script (genai_tigs_diversity/experiments/cifar10_experiment/cifar10_sdllm_generator.py); instruction verbatim
+# (her placeholders: style_phrase -> {phrase}, selected_class -> {category}, selected_style -> {descriptor})
+paper_dp:
+  instruction: |
+    You are a prompt generator for a text-to-image model.
+
+    Generate exactly one short prompt starting with:
+    A photo of a ...
+
+    Rules:
+    - Under 12 words.
+    - One CIFAR-10 object(airplane, automobile/car, bird, cat, deer, dog, frog, horse, ship, truck) in one valid scene.
+    - You must include the exact phrase: "{phrase}" unless a special rule below applies.
+    - Always include the exact phrase: {phrase} at the end.
+    - No adjectives or extra objects.
+    - Output only the prompt.
+
+    Class: {category}
+    Style: {descriptor}
+    Prompt:
+num_seeds: 100
+base_seed: 0
+classes:
+  - {label: 0, name: airplane, fixed_prompt: "A photo of A1plane0 cifar10_0", descriptors: [water, grass, road], template_phrases: {water: "in water", grass: "on grass", road: "on road"}}
+  - {label: 1, name: automobile, paper_vars: {category: car}, fixed_prompt: "A photo of car1 cifar10_1", descriptors: [water, grass, road], template_phrases: {water: "in water", grass: "on grass", road: "on road"}}
+  - {label: 2, name: bird, fixed_prompt: "A photo of bird2 cifar10_2", descriptors: [water, grass, road], template_phrases: {water: "in water", grass: "on grass", road: "on road"}}
+  - {label: 3, name: cat, fixed_prompt: "A photo of cat3 cifar10_3", descriptors: [water, grass, road], template_phrases: {water: "in water", grass: "on grass", road: "on road"}}
+  - {label: 4, name: deer, fixed_prompt: "A photo of deer4 cifar10_4", descriptors: [water, grass, road], template_phrases: {water: "in water", grass: "on grass", road: "on road"}}
+  - {label: 5, name: dog, fixed_prompt: "A photo of dog5 cifar10_5", descriptors: [water, grass, road], template_phrases: {water: "in water", grass: "on grass", road: "on road"}}
+  - {label: 6, name: frog, fixed_prompt: "A photo of frog6 cifar10_6", descriptors: [water, grass, road], template_phrases: {water: "in water", grass: "on grass", road: "on road"}}
+  - {label: 7, name: horse, fixed_prompt: "A photo of horse7 cifar10_7", descriptors: [water, grass, road], template_phrases: {water: "in water", grass: "on grass", road: "on road"}}
+  - {label: 8, name: ship, fixed_prompt: "A photo of ship8 cifar10_8", descriptors: [water, grass, road], template_phrases: {water: "in water", grass: "on grass", road: "on road"}}
+  - {label: 9, name: truck, fixed_prompt: "A photo of truck9 cifar10_9", descriptors: [water, grass, road], template_phrases: {water: "in water", grass: "on grass", road: "on road"}}

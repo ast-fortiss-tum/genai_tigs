@@ -12,9 +12,10 @@ entry at the end of this file and update the sections above it.
 
 - **Done:** all 4 tasks x 3 arms (FP, our DP, Maryam's DP) at **30 seeds**, analysed (section 3); CIFAR-10, pizza and
   teddy at **50 seeds**, analysed (section 3b).
-- **Running:** extension to the paper's **100 seeds** (`scripts/queue_100.sh`, started 2026-11-26 12:22, ~4-5
-  GPU-days; seeds 30-99 are appended, 0-29 untouched; rounds of 50 then 100; CIFAR-10 / pizza / teddy first,
-  CelebA last). The paper used 100 latents per task (Sec. 5; Maryam's scripts `imgs_to_samp = 100`).
+- **Running:** `scripts/queue_weekend.sh` (replaced `queue_100.sh` on 2026-11-27 16:45, entry 2026-11-27 (23) in
+  the log below): 0 CelebA analyses at 50 + pre-registered diversity test; A new arm `dp-paper-nostyle` to 50;
+  B CIFAR-10 / pizza / teddy to the paper's 100 seeds; C nostyle to 100; D CelebA to 100. Each phase regenerates,
+  commits and pushes [docs/auto_results.md](docs/auto_results.md) (machine-written tables).
 - **Not started:** RQ4 / RQ5 (human evaluation), see section 5.
 
 ## 2. Setup
@@ -208,7 +209,7 @@ CLIP, per-arm: the only case where DP is consistently higher is CIFAR-10 (DP 10/
   (resumes from `records.jsonl`).
 - One comparison: `python -m dptig.analyze --fp runs/main/<task>_fp --dp runs/main/<task>_<arm> --diversity --table3 --view {cifar10,imagenet,celeba} --kmeans-seeds 10 --device cpu`.
 - Summary table: `python -m dptig.summarize runs/main`.
-- Queue: `setsid nohup ./scripts/queue_100.sh >> runs/main/queue_100.out 2>&1 < /dev/null &` (resumes; restart the same
+- Queue: `setsid nohup ./scripts/queue_weekend.sh >> runs/main/queue_weekend.out 2>&1 < /dev/null &` (resumes; restart the same
   way if the machine goes down). Progress: `runs/main/status.log`. **Do not change configs or generation code while
   it runs**, or seeds 30-99 are not comparable with 0-29.
 - Maryam's code: https://github.com/deeptestai/genai_tigs_diversity (local clone `~/repos/maryam_src/`).
@@ -220,3 +221,18 @@ CLIP, per-arm: the only case where DP is consistently higher is CIFAR-10 (DP 10/
 - **2026-11-27** 50-seed results for CIFAR-10, pizza and teddy (section 3b). Per-arm Table-3 clustering
   (`scripts/t3_separate.py`, CPU) shows the pizza dp-paper diversity effect is an artefact of the joint clustering
   (issue 8). CelebA at 50 running.
+- **2026-11-27 (23)** Plan until 2026-12-02, `scripts/queue_weekend.sh` replaces `queue_100.sh` (stopped by hand;
+  its CelebA dp-paper run to 50 was left to finish). Two additions:
+  1. **New arm `dp-paper-nostyle`** (`configs/<task>_nostyle.yaml`): dp-paper prompts (same cache, same latents) on
+     FP's weights (concept LoRA at 1.0, no style LoRA). Separates the prompt effect from the style-LoRA confound
+     (issue 2). CIFAR-10 / pizza / teddy only (CelebA dp-paper has no style LoRA).
+  2. **Pre-registered RQ6 test** (`scripts/div_perm.py`), fixed now, before the results it produces are read, and
+     the only diversity test used to answer "is DP more diverse?" from here on. Primary: Eq. 6 (mean pairwise
+     cosine distance), ResNet-50 V2 features of the classifier input, failure images of valid seeds, per level,
+     each arm vs FP; two-sided permutation test on D_arm - D_FP (10k), 95% bootstrap CI over images; Holm per arm
+     over all task x level tests. Secondary: same with CLIP. Replaces the paired t over overlapping subsamples
+     (Eq. 6 above) and over the 6 K values (Table 3), whose samples are not independent (issue 1). (A smoke test on
+     teddy was run while writing the script; phase 0 recomputes it unchanged.)
+  - **Correction (RQ4/RQ5):** the MTurk study in Maryam's repo asked workers for the category / attributes of the
+    paper's images, i.e. validity and label preservation. It says nothing about diversity, so it cannot support
+    RQ6.
