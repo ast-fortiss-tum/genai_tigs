@@ -16,7 +16,7 @@ entry at the end of this file and update the sections above it.
   the log below): 0 CelebA analyses at 50 + pre-registered diversity test; A new arm `dp-paper-nostyle` to 50;
   B CIFAR-10 / pizza / teddy to the paper's 100 seeds; C nostyle to 100; D CelebA to 100. Each phase regenerates,
   commits and pushes [docs/auto_results.md](docs/auto_results.md) (machine-written tables).
-- **Not started:** RQ4 / RQ5 (human evaluation), see section 5.
+- **RQ4 / RQ5:** recomputed from the raw MTurk answers that exist (pizza DP, CelebA DP + FP), issue 9.
 
 ## 2. Setup
 
@@ -187,6 +187,19 @@ CLIP, per-arm: the only case where DP is consistently higher is CIFAR-10 (DP 10/
    At 50 seeds this alone produces pizza dp-paper 0.47 -> 0.71 (10/10 significant); with per-arm clustering the
    effect is gone (0.85 -> 0.73). Recommendation: cluster each arm separately (or on a fixed reference set) and
    report that. Section 3b.
+9. **Table 2's human-study columns (RQ4 / RQ5) only partly reproduce from the raw MTurk answers**
+   (`scripts/mturk_reanalysis.py`, the paper's procedure: 2 assessors, agreement, disagreements excluded).
+   - Raw answers exist only for **pizza DP** (75 low / 85 high images: exactly Table 2's counts) and **CelebA DP +
+     FP**. CIFAR-10 and teddy have one "extra" assignment each; pizza FP has none. So DP vs FP can be tested on
+     CelebA only.
+   - **CelebA high reproduces exactly** (DP 100% / 55.06% = 49/89, FP 100% / 57.47% = 50/87).
+   - **CelebA low does not:** DP preserved 5/17 = 29.4% (paper 41.18% = 7/17); FP valid 22/22 (paper 91.30% =
+     21/23), preserved 14/22 = 63.6% (paper 66.67%). With our counts FP > DP is borderline (Fisher p=0.054).
+   - **Pizza DP does not:** valid 97.0% / 97.3% (paper 100 / 96.47), **preserved 61.5% / 52.1% (paper 85.33 /
+     85.37)**. No obvious counting rule gives the paper's 64/75 and 70/82 ("either assessor says pizza": 69/75,
+     74/85; "both": 45/75, 42/85; with or without the attention-check filter).
+   - Ask Maryam for the script / spreadsheet behind columns 6-7 and for the missing CIFAR-10, teddy and pizza-FP
+     answers. Until then RQ4/RQ5 cannot be verified for 3 of 4 tasks, and the pizza preservation numbers look wrong.
 
 ## 5. Next
 
@@ -236,3 +249,6 @@ CLIP, per-arm: the only case where DP is consistently higher is CIFAR-10 (DP 10/
   - **Correction (RQ4/RQ5):** the MTurk study in Maryam's repo asked workers for the category / attributes of the
     paper's images, i.e. validity and label preservation. It says nothing about diversity, so it cannot support
     RQ6.
+- **2026-11-27 (23b)** RQ4/RQ5 reanalysed from the raw MTurk answers (issue 9): CelebA high matches Table 2
+  exactly; CelebA low and pizza DP do not (pizza label preservation 61.5 / 52.1% vs the paper's 85.3%); the raw
+  answers for CIFAR-10, teddy and pizza FP are not in Maryam's repo.
