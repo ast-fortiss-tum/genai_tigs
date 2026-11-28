@@ -162,7 +162,7 @@ CLIP, per-arm: the only case where DP is consistently higher is CIFAR-10 (DP 10/
    result. The t-test pairs 6 K values computed on the same images, so they are not independent samples and p is
    overstated. Recommendation: report a bootstrap CI over images, or Eq. 6 with independent subsamples, and state
    the clustering seed.
-2. **Style-LoRA confound in Maryam's DP.** Her DP runs merge a style LoRA that FP does not use (teddy: concept LoRA at
+2. **Style-LoRA confound in Maryam's DP -- confirmed as the cause of every dp-paper effect (entry (25)).** Her DP runs merge a style LoRA that FP does not use (teddy: concept LoRA at
    0.01, i.e. practically off), so FP vs DP differ in prompt *and* weights. The paper and the co-authors' answer of
    2026-11-13 say there is no style LoRA. Our `dp` arm is the clean comparison.
 3. **The LLM adds little.** Maryam's instructions dictate the prompt ("A photo of a pizza {style_phrase}"): 3 distinct
@@ -267,3 +267,21 @@ CLIP, per-arm: the only case where DP is consistently higher is CIFAR-10 (DP 10/
       fewer evenly filled clusters. Consistent with a style LoRA that adds a distinct look rather than variety.
   - Phase A next (dp-paper-nostyle, CIFAR-10 39/50 at 00:47) decides whether the ImageNet dp-paper effect is the
     prompts or the style LoRA.
+- **2026-11-28 (25) Phase A done: dp-paper-nostyle at 50 (CIFAR-10, pizza, teddy). The dp-paper effects are the
+  style LoRA, not the prompts.**
+  - **Pizza:** Maryam's dp-paper prompts are word-for-word our DP prompts ("A photo of a pizza on a plate", 50/50
+    seeds), so the no-style arm = our DP arm (same prompt, weights, latents) and reproduced it **bit-identically**
+    (validity 58%, iterations 73, every diversity value; also a determinism check). On pizza, dp-paper vs DP
+    differ only in the style LoRA, so **all of dp-paper's pizza effects come from the style LoRA**: the RQ3 slowdown
+    (121 vs 74 it, p=0.006 -> 73, p=0.89), the RQ6 gain (ResNet +0.15 / +0.13 -> +0.02 / +0.02, p ~0.6; CLIP pizza
+    low +0.083, Holm 0.0096 -> -0.006, p=0.57) and the higher seed validity (86% -> 58%).
+  - **Teddy** (prompts differ from our DP, same as dp-paper): without the style LoRA (dp-paper's concept LoRA was at
+    0.01, here 1.0) the ResNet gain shrinks from +0.05 / +0.06 (raw p 0.016 / 0.012) to +0.03 / +0.01 (p 0.26 /
+    0.69), and seed validity falls to 64% (FP 90%, p=0.004), like our DP (54%). The faster search at the high level
+    stays (7 -> 4 it, p=0.047), as in our DP.
+  - **CIFAR-10:** nothing in either arm (all p >= 0.33).
+  - **Pre-registered RQ6 test, dp-paper-nostyle: 0/12 significant** (ResNet and CLIP, raw p >= 0.26).
+    Per-arm Table-3 clustering agrees: no-style never higher than FP on pizza or teddy ResNet (0/10, 1/10 seeds).
+  - **So with FP's weights, no DP prompt variant (ours or Maryam's) is more diverse than FP on any task under the
+    pre-registered test.** The only diversity, efficiency and validity differences in Maryam's DP runs come from the
+    style LoRA (issue 2). Next: phase B (all arms to 100), started 07:29.
